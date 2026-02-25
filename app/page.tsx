@@ -19,7 +19,7 @@ const subsocs = [
   { name: "Punjabi Soc",           icon: "/punjabi.png",   href: "/punjabisoc", desc: "Honouring the vibrant spirit of Punjabi arts." },
   { name: "Muse",                  icon: "/muse.png",      href: "/muse",       desc: "A creative writing collective for prose & fiction." },
   { name: "Thapar Quizzing Club",  icon: "/tqc.png",       href: "/tqc",        desc: "For curious minds who live to quiz." },
-  { name: "Cineasts",              icon: "/cineasts.jpg",   href: "/cineasts",   desc: "Exploring cinema as art, language & culture." },
+  { name: "Cineastes",              icon: "/cineasts.jpg",   href: "/cineastes",   desc: "Exploring cinema as art, language & culture." },
   { name: "Theatre Soc",           icon: "/theatre.png",   href: "/theatre",    desc: "Telling human stories through the power of stage." },
 ];
 
