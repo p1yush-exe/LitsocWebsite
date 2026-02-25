@@ -296,41 +296,6 @@ export default function EventCalendar() {
             </span>
           </div>
 
-          {/* ── Upcoming list ── */}
-          {!loading && !error && (() => {
-            const upcoming = events
-              .filter((e) => !e.isPast)
-              .sort((a, b) => a.date.localeCompare(b.date))
-              .slice(0, 4);
-            if (upcoming.length === 0) return null;
-            return (
-              <div className="mt-6 space-y-2.5">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-gray-400 pl-0.5">
-                  Next up
-                </p>
-                {upcoming.map((ev) => (
-                  <button
-                    key={ev.id}
-                    onClick={() => setSelectedEvent(ev)}
-                    className="flex w-full items-center gap-3.5 rounded-xl border border-black/[0.05] bg-white px-4 py-3 text-left shadow-sm transition-all hover:shadow-md hover:scale-[1.005] active:scale-[0.998]"
-                  >
-                    <span className="shrink-0 rounded-full" style={{ width: 3, height: 32, background: "#e11d48" }} />
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-semibold text-gray-900">{ev.title}</p>
-                      <p className="mt-0.5 text-[11px] text-gray-400">
-                        {ev.subsoc}&nbsp;·&nbsp;
-                        {new Date(ev.date + "T00:00:00").toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
-                        {ev.time ? `\u00a0·\u00a0${ev.time}` : ""}
-                      </p>
-                    </div>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-4 w-4 shrink-0 text-gray-300">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
-                    </svg>
-                  </button>
-                ))}
-              </div>
-            );
-          })()}
 
         </div>
       </section>
