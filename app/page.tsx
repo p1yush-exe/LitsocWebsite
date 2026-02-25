@@ -3,6 +3,9 @@
 import Image from "next/image";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import EventCalendar from "@/components/EventCalendar";
 
 /* ─── Data ─────────────────────────────────────────────────────────────────── */
 
@@ -425,7 +428,7 @@ function RouletteWheel() {
 
   /* ─── Render ─── */
   return (
-    <section className="relative w-full overflow-hidden bg-[#0d0d18] pb-14 pt-10">
+    <section className="relative w-full overflow-hidden bg-[#FAF8F5] pb-10 pt-10">
 
       {/* ── Full-screen shot overlay ── */}
       <div
@@ -435,25 +438,25 @@ function RouletteWheel() {
 
       {/* ── Background atmosphere ── */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-rose-700/15 blur-[110px]" />
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 h-40 w-72 rounded-full bg-indigo-800/10 blur-[70px]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-rose-300/20 blur-[120px]" />
+        <div className="absolute top-16 left-1/2 -translate-x-1/2 h-40 w-72 rounded-full bg-indigo-200/20 blur-[80px]" />
       </div>
 
       {/* ── Headings ── */}
       <div className="relative z-10 text-center px-4">
         <p className="mb-1 text-xs font-semibold uppercase tracking-[0.28em] text-rose-500">
-          Our Sub-Societies
+        Our Sub-Societies
         </p>
         <h3
-          className="mb-2 text-4xl font-bold text-white md:text-5xl"
+          className="mb-1 text-4xl font-bold text-gray-900 md:text-5xl"
           style={{ fontFamily: "Georgia,serif", letterSpacing: "-0.01em" }}
         >
           Choose your vice
         </h3>
-        <p className="mb-8 text-sm text-gray-600">
+        <p className="text-sm text-gray-400 mt-2">
           Drag to spin&nbsp;&nbsp;·&nbsp;&nbsp;
           click the{" "}
-          <span className="text-rose-400 font-medium">loaded chamber</span>{" "}
+          <span className="text-rose-500 font-medium">loaded chamber</span>{" "}
           to enter
         </p>
       </div>
@@ -465,13 +468,13 @@ function RouletteWheel() {
           onClick={stepLeft}
           disabled={busy}
           aria-label="Previous"
-          className="absolute left-2 md:left-6 z-50 flex items-center justify-center rounded-full text-white transition-all hover:scale-110 disabled:opacity-30"
+          className="absolute left-2 md:left-6 z-50 flex items-center justify-center rounded-full text-gray-700 transition-all hover:scale-110 disabled:opacity-30"
           style={{
             top: "50%",
             transform: "translateY(-50%)",
             width: 40, height: 40,
-            background: "rgba(255,255,255,0.07)",
-            border: "1px solid rgba(255,255,255,0.12)",
+            background: "rgba(0,0,0,0.06)",
+            border: "1px solid rgba(0,0,0,0.10)",
             fontSize: 22,
             lineHeight: 1,
             paddingBottom: 2,
@@ -485,13 +488,13 @@ function RouletteWheel() {
           onClick={stepRight}
           disabled={busy}
           aria-label="Next"
-          className="absolute right-2 md:right-6 z-50 flex items-center justify-center rounded-full text-white transition-all hover:scale-110 disabled:opacity-30"
+          className="absolute right-2 md:right-6 z-50 flex items-center justify-center rounded-full text-gray-700 transition-all hover:scale-110 disabled:opacity-30"
           style={{
             top: "50%",
             transform: "translateY(-50%)",
             width: 40, height: 40,
-            background: "rgba(255,255,255,0.07)",
-            border: "1px solid rgba(255,255,255,0.12)",
+            background: "rgba(0,0,0,0.06)",
+            border: "1px solid rgba(0,0,0,0.10)",
             fontSize: 22,
             lineHeight: 1,
             paddingBottom: 2,
@@ -534,11 +537,11 @@ function RouletteWheel() {
                 <div
                   className="relative w-full h-full rounded-full overflow-hidden"
                   style={{
-                    border: `2px solid ${isLoaded ? "rgba(244,63,94,0.85)" : "rgba(80,80,100,0.55)"}`,
-                    background: "#10101c",
+                    border: `2px solid ${isLoaded ? "rgba(244,63,94,0.80)" : "rgba(180,170,160,0.55)"}`,
+                    background: "#fff",
                     boxShadow: isLoaded
-                      ? "0 0 18px rgba(244,63,94,0.55), inset 0 0 12px rgba(244,63,94,0.08)"
-                      : "inset 0 0 8px rgba(0,0,0,0.6)",
+                      ? "0 0 16px rgba(244,63,94,0.35), 0 2px 8px rgba(0,0,0,0.10)"
+                      : "0 2px 6px rgba(0,0,0,0.08)",
                     transition: "border-color 0.2s, box-shadow 0.2s",
                   }}
                 >
@@ -567,21 +570,21 @@ function RouletteWheel() {
                 ))}
               </mask>
               <radialGradient id="centreHalo" cx="50%" cy="50%" r="50%">
-                <stop offset="0%"   stopColor="rgba(244,63,94,0.35)" />
+                <stop offset="0%"   stopColor="rgba(244,63,94,0.18)" />
                 <stop offset="100%" stopColor="rgba(244,63,94,0)"    />
               </radialGradient>
               <radialGradient id="sideHalo" cx="50%" cy="50%" r="50%">
-                <stop offset="0%"   stopColor="rgba(255,255,255,0.06)" />
-                <stop offset="100%" stopColor="rgba(255,255,255,0)"    />
+                <stop offset="0%"   stopColor="rgba(0,0,0,0.04)" />
+                <stop offset="100%" stopColor="rgba(0,0,0,0)"    />
               </radialGradient>
             </defs>
 
-            {/* Dark panel — holes are transparent due to mask */}
-            <rect width={W} height={H} fill="#0d0d18" mask="url(#panelHoles)" />
+            {/* Cream panel — holes are transparent due to mask */}
+            <rect width={W} height={H} fill="#FAF8F5" mask="url(#panelHoles)" />
 
             {/* Per-hole decorations */}
             {HOLES.map((h, i) => {
-              const accent = h.centre ? "#f43f5e" : "#2e2e42";
+              const accent = h.centre ? "#f43f5e" : "rgba(160,150,140,0.70)";
               const glow   = h.centre ? "url(#centreHalo)" : "url(#sideHalo)";
               return (
                 <g key={i}>
@@ -589,19 +592,19 @@ function RouletteWheel() {
                   <circle
                     cx={h.cx} cy={h.cy} r={h.r + 9}
                     fill="none"
-                    stroke={h.centre ? "rgba(244,63,94,0.14)" : "rgba(255,255,255,0.04)"}
+                    stroke={h.centre ? "rgba(244,63,94,0.10)" : "rgba(0,0,0,0.04)"}
                     strokeWidth={8}
                   />
                   <circle
                     cx={h.cx} cy={h.cy} r={h.r + 2}
                     fill="none" stroke={accent}
                     strokeWidth={h.centre ? 2.2 : 1.4}
-                    style={h.centre ? { filter: "drop-shadow(0 0 7px rgba(244,63,94,0.9))" } : undefined}
+                    style={h.centre ? { filter: "drop-shadow(0 0 6px rgba(244,63,94,0.55))" } : undefined}
                   />
                   <circle
                     cx={h.cx} cy={h.cy} r={h.r - 2}
                     fill="none"
-                    stroke={h.centre ? "rgba(244,63,94,0.25)" : "rgba(255,255,255,0.04)"}
+                    stroke={h.centre ? "rgba(244,63,94,0.20)" : "rgba(0,0,0,0.06)"}
                     strokeWidth={1}
                   />
                   {h.centre && [0, 90, 180, 270].map((a) => {
@@ -655,13 +658,13 @@ function RouletteWheel() {
 
       {/* ── Info strip ── */}
       <div className="relative z-10 mt-5 text-center px-4">
-        <p className="text-base font-semibold text-white tracking-wide" style={{ letterSpacing: "0.04em" }}>
+        <p className="text-base font-semibold text-gray-900 tracking-wide" style={{ letterSpacing: "0.04em" }}>
           {subsocs[centerIdx].name}
         </p>
         <p className="mt-1 text-sm text-gray-500 max-w-xs mx-auto">
           {subsocs[centerIdx].desc}
         </p>
-        <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-gray-700">
+        <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-gray-400">
           pull trigger to enter
         </p>
       </div>
@@ -729,56 +732,78 @@ function Footer() {
 
 /* ─── Home Page ──────────────────────────────────────────────────────────────── */
 export default function Home() {
+  const heroRef   = useRef<HTMLElement>(null);
+  const litsocRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        litsocRef.current,
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1,
+          y: 0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: heroRef.current,
+            start: "top top",
+            end: "+=560",
+            scrub: 1.2,
+            pin: true,
+          },
+        }
+      );
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
     <div className="min-h-screen w-full" style={{ background: "#FAF8F5" }}>
 
       {/* ── Hero ── */}
       <section
+        ref={heroRef}
         className="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden"
         style={{ background: "radial-gradient(ellipse at 50% 60%, #eef0fa 0%, #f5f3ef 55%, #FAF8F5 100%)" }}
       >
-        <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-indigo-200/30 blur-[120px]" />
+        {/* LITSOC ghost title — animated in by GSAP ScrollTrigger */}
+        <h1
+          ref={litsocRef}
+          className="pointer-events-none absolute left-1/2 text-center font-black uppercase leading-none"
+          style={{
+            top: "20%",
+            transform: "translate(-50%, -50%)",
+            fontSize: "clamp(6rem, 19vw, 15rem)",
+            letterSpacing: "-0.02em",
+            fontFamily: '"Arial Black","Arial Bold",Arial,sans-serif',
+            zIndex: 0,
+            background: "linear-gradient(to bottom, rgba(104, 144, 252, 0.55) 40%, rgba(156, 181, 251, 0) 80%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+            userSelect: "none",
+            whiteSpace: "nowrap",
+            opacity: 0,
+          }}
+        >
+          LITSOC
+        </h1>
 
-        <div className="relative z-10 flex w-full max-w-screen-xl flex-col items-center gap-12 px-6 py-28 md:flex-row md:justify-between">
-          {/* Text */}
-          <div className="flex flex-col items-center gap-6 text-center md:items-start md:text-left md:max-w-lg">
-            <span className="inline-block rounded-full border border-indigo-400/50 bg-indigo-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-indigo-600">
-              Thapar Institute of Engineering &amp; Technology
-            </span>
-            <h1 className="text-5xl font-bold leading-tight text-gray-900 md:text-6xl lg:text-7xl">
-              Literary<br />
-              <span className="bg-gradient-to-r from-indigo-300 via-purple-300 to-rose-300 bg-clip-text text-transparent">
-                Society
-              </span>
-            </h1>
-            <p className="max-w-md text-base leading-relaxed text-gray-500">
-              A confluence of words, ideas, and voices — TIET&apos;s home for poetry,
-              debate, theatre, cinema, quizzing, and every form of literary expression.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <a href="#" className="rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-900/50 transition hover:bg-indigo-500">
-                Explore Events
-              </a>
-              <a href="#" className="rounded-full border border-gray-300 bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 hover:text-gray-900">
-                Get Involved
-              </a>
-            </div>
-          </div>
-
-          {/* Group image */}
-          <div className="relative shrink-0">
-            <div className="absolute -inset-4 rounded-3xl bg-gradient-to-br from-indigo-600/20 via-purple-600/10 to-rose-600/20 blur-2xl" />
-            <div className="relative overflow-hidden rounded-3xl border border-gray-200 shadow-2xl">
-              <Image
-                src="/group.jpg"
-                alt="Literary Society TIET Group Photo"
-                width={520}
-                height={380}
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
+        {/* Content: image centred, description below */}
+        <div className="relative z-10 flex flex-col items-center gap-8 px-6 py-28 text-center">
+          <Image
+            src="/group.png"
+            alt="Literary Society TIET Group Photo"
+            width={900}
+            height={600}
+            className="w-full max-w-4xl object-cover"
+            priority
+          />
+          <p className="max-w-2xl text-base leading-relaxed text-gray-500 font-lato">
+            A confluence of words, ideas, and voices — TIET&apos;s home for poetry,
+            debate, theatre, cinema, quizzing, and every form of literary expression.
+          </p>
         </div>
 
         {/* Scroll cue */}
@@ -792,6 +817,9 @@ export default function Home() {
 
       {/* ── Video Carousel ── */}
       <VideoCarousel />
+
+      {/* ── Events Calendar ── */}
+      <EventCalendar />
 
       {/* ── Subsoc Roulette ── */}
       <RouletteWheel />

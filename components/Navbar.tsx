@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -30,13 +30,26 @@ export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [atTop, setAtTop] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => setAtTop(window.scrollY < 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const toggleDropdown = (label: string) => {
     setOpenDropdown(openDropdown === label ? null : label);
   };
 
   return (
-    <nav className="relative w-full border-b border-gray-200/70 bg-[#FAF8F5]">
+    <nav
+      className={`sticky top-0 z-40 w-full transition-all duration-300 ${
+        atTop
+          ? "border-b border-transparent bg-[#FAF8F5] shadow-none"
+          : "border-b border-gray-200/70 bg-[#FAF8F5]/95 shadow-sm backdrop-blur-sm"
+      }`}
+    >
       <div className="relative z-10 mx-1 flex h-14 max-w-screen-xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Image src="/logo.png" alt="LitSoc Logo" width={50} height={50} className="rounded-full" />
