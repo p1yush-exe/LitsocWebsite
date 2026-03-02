@@ -111,7 +111,7 @@ export default function EventCalendar() {
     <>
       <EventCard event={selectedEvent} onClose={() => setSelectedEvent(null)} />
 
-      <section className="w-full bg-[#FAF8F5] py-10 px-4">
+      <section className="w-full bg-milk py-10 px-4">
         <div className="mx-auto w-full max-w-3xl">
 
           {/* ── Month nav ── */}

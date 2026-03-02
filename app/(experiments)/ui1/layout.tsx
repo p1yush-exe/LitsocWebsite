@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Antonio } from "next/font/google";
 import localFont from "next/font/local";
-import "./globals.css";
+import "./ui1.css";
+import Navbar from "./components/Navbar";
 
 const antonio = Antonio({
   variable: "--font-antonio",
@@ -9,7 +10,7 @@ const antonio = Antonio({
 });
 
 const proximaNova = localFont({
-  src: "../public/Proxima Nova Regular.ttf",
+  src: "../../../public/Proxima Nova Regular.ttf",
   variable: "--font-proxima-nova",
   display: "swap",
 });
@@ -19,19 +20,15 @@ export const metadata: Metadata = {
   description: "Official website of the Literary Society, Thapar Institute of Engineering & Technology",
 };
 
-export default function RootLayout({
+export default function UI1Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${antonio.variable} ${proximaNova.variable} antialiased`}
-        suppressHydrationWarning
-      >
-        {children}
-      </body>
-    </html>
+    <div className={`${antonio.variable} ${proximaNova.variable}`}>
+      <Navbar />
+      {children}
+    </div>
   );
 }

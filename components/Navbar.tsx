@@ -46,16 +46,16 @@ export default function Navbar() {
     <nav
       className={`sticky top-0 z-40 w-full transition-all duration-300 ${
         atTop
-          ? "border-b border-transparent bg-[#FAF8F5] shadow-none"
-          : "border-b border-gray-200/70 bg-[#FAF8F5]/95 shadow-sm backdrop-blur-sm"
+          ? "border-b border-transparent bg-milk shadow-none"
+          : "border-b border-red-brown/20 bg-milk/95 shadow-sm backdrop-blur-sm"
       }`}
     >
-      <div className="relative z-10 mx-1 flex h-14 max-w-screen-xl items-center justify-between px-6">
+      <div className="relative z-10 mx-5 flex h-14 max-w-7xl items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <Image src="/logo.png" alt="LitSoc Logo" width={50} height={50} className="rounded-full" />
+          <Image src="/logo.png" alt="LitSoc Logo" width={70} height={70} className="rounded-full" />
 
           {/* Brand name in Lato */}
-          <span className="text-lg py-2 font-semibold tracking-wide text-gray-900 font-lato">
+          <span className="text-xl py-2 font-bold tracking-wide text-dark-brown font-antonio">
             Literary Society, TIET
           </span>
         </Link>
@@ -67,7 +67,7 @@ export default function Navbar() {
               <div key={link.label} className="relative">
                 <button
                   onClick={() => toggleDropdown(link.label)}
-                  className="flex items-center gap-1 rounded px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:text-gray-950"
+                  className="flex items-center gap-1 rounded px-3 py-1.5 text-sm font-medium text-dark-brown transition-colors hover:text-gray-950"
                 >
                   {link.label}
                   <svg
@@ -87,7 +87,7 @@ export default function Navbar() {
                   </svg>
                 </button>
                 {openDropdown === link.label && (
-                  <div className="absolute left-0 top-full mt-1 min-w-[160px] rounded-md border border-gray-200 bg-[#FAF8F5]/98 py-1 shadow-lg backdrop-blur-sm">
+                  <div className="absolute left-0 top-full mt-1 min-w-[160px] rounded-md border border-red-brown/20 bg-milk/98 py-1 shadow-lg backdrop-blur-sm">
                     {link.dropdown.map((item) => (
                       <Link
                         key={item.label}
@@ -154,7 +154,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="relative z-10 border-t border-gray-200 bg-[#FAF8F5]/98 px-6 py-3 md:hidden">
+        <div className="relative z-10 border-t border-red-brown/20 bg-milk/98 px-6 py-3 md:hidden">
           {navLinks.map((link) => (
             <div key={link.label}>
               <Link

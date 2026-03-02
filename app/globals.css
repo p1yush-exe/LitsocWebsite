@@ -1,29 +1,91 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FAF8F5;
-  --foreground: #1a1a1a;
+  --background: #faeade;
+  --foreground: #523122;
+
+  /* Section gradient (available for decorative use) */
+  --gradient-start: rgba(104, 144, 252, 0.55);
+  --gradient-end:   rgba(104, 144, 252, 0.55);
+
+  /* Ghost heading text gradient */
+  --ghost-text-start: rgba(49, 151, 164,1);
+  --ghost-text-end:   rgba(41, 170, 188, 0);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-lato: var(--font-lato);
+/* ── Theme tokens (colors + fonts) ────────────────────────── */
+@theme {
+  --color-background:   var(--background);
+  --color-foreground:   var(--foreground);
+
+  --color-milk:         #faeade;
+  --color-dark-brown:   #523122;
+  --color-mid-brown:    #a26833;
+  --color-light-brown:  #e3a458;
+  --color-red-brown:    #7f3b2d;
+  --color-footer-bg:    #523122;
+  --color-footer:       #faeade;
+  --color-milk-yellow:  #e3d3bc;
+  --color-red:          #a02128;
+  --color-litsoc-black: #222123;
+  --color-main-bg:      #232224;
+
+  --font-sans:          var(--font-antonio), "Antonio", sans-serif;
+  --font-paragraph:     var(--font-proxima-nova), sans-serif;
 }
 
+/* ── Utilities ─────────────────────────────────────────────── */
 @utility nav-bg {
-  background: #FAF8F5;
+  background: #faeade;
   box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06);
 }
 
 @utility font-lato {
-  font-family: var(--font-lato), Lato, sans-serif;
+  font-family: var(--font-proxima-nova), sans-serif;
 }
 
+@utility font-antonio {
+  font-family: var(--font-antonio), "Antonio", sans-serif;
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
 body {
-  background: #FAF8F5;
+  background: #faeade;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-proxima-nova), sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-antonio), "Antonio", sans-serif;
+}
+
+/* ── Component classes ─────────────────────────────────────── */
+@layer components {
+  /* Roulette / section label (e.g. "Our Sub-Societies") */
+  .section-label {
+    @apply font-lato text-xs font-semibold uppercase tracking-[0.28em] text-red-brown mb-1;
+  }
+
+  /* Roulette / section main heading (e.g. "CHOOSE YOUR VICE") */
+  .section-heading {
+    @apply font-antonio text-4xl md:text-5xl font-bold text-dark-brown mb-1 tracking-[-0.01em];
+  }
+
+  /* Roulette / section hint/sub-text */
+  .section-hint {
+    @apply font-lato text-sm text-mid-brown mt-2 opacity-75;
+  }
+
+  /* Shared prev/next arrow navigation button */
+  .btn-nav-arrow {
+    @apply absolute z-50 flex items-center justify-center w-10 h-10 leading-none pb-[2px]
+           text-dark-brown transition-transform duration-150 top-1/2 -translate-y-1/2;
+
+    &:hover    { @apply scale-110 -translate-y-1/2; }
+    &:disabled { @apply opacity-30; }
+
+    @media (min-width: 768px) {
+      @apply rounded-full bg-black/[0.06] border border-black/10;
+    }
+  }
 }
