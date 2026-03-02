@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useRef, useEffect, useLayoutEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -44,14 +44,33 @@ const FALLBACK_VIDEOS: CarouselVideo[] = [
   { id: "5", youtubeId: "gxEPV4kolz0", title: "Quiz Championship",    description: "TQC"           },
 ];
 
+type MobileAnim = { prev: number; dir: 1 | -1; phase: "init" | "run" } | null;
+
 function VideoCarousel() {
   const [videos, setVideos] = useState<CarouselVideo[]>(FALLBACK_VIDEOS);
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [nameVisible, setNameVisible] = useState(true);
-  const [isMobile, setIsMobile] = useState(
-    () => typeof window !== "undefined" ? window.matchMedia("(max-width: 768px)").matches : false
+  const isMobile = useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia("(max-width: 768px)");
+      mq.addEventListener("change", cb);
+      return () => mq.removeEventListener("change", cb);
+    },
+    () => window.matchMedia("(max-width: 768px)").matches,
+    () => false,
   );
+  const [mobileAnim, setMobileAnim] = useState<MobileAnim>(null);
+
+  /* stable refs so interval/rAF never sees stale values */
+  const animatingRef = useRef(animating);
+  const currentRef   = useRef(current);
+  const videosRef    = useRef(videos);
+  useLayoutEffect(() => {
+    animatingRef.current = animating;
+    currentRef.current   = current;
+    videosRef.current    = videos;
+  });
 
   useEffect(() => {
     fetch("/api/carousel")
@@ -60,22 +79,48 @@ function VideoCarousel() {
       .catch(() => {/* keep fallback */});
   }, []);
 
+  /* ── Mobile swipe helper (shared by auto-advance + touch + handleNav) ── */
+  const triggerMobileSlide = (dir: 1 | -1) => {
+    if (animatingRef.current) return;
+    const prevIdx = currentRef.current;
+    const nextIdx = ((prevIdx + dir) % videosRef.current.length + videosRef.current.length) % videosRef.current.length;
+    setAnimating(true);
+    setNameVisible(false);
+    setMobileAnim({ prev: prevIdx, dir, phase: "init" });
+    setCurrent(nextIdx);
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setMobileAnim(a => a ? { ...a, phase: "run" } : null);
+        setTimeout(() => {
+          setMobileAnim(null);
+          setNameVisible(true);
+          setAnimating(false);
+        }, 480);
+      });
+    });
+  };
+
+  /* ── Mobile auto-advance: one video every 3 s ── */
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)");
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+    if (!isMobile) return;
+    const timer = setInterval(() => triggerMobileSlide(1), 3000);
+    return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobile]);
 
   const touchStart = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.changedTouches[0].screenX; };
   const onTouchEnd   = (e: React.TouchEvent) => {
     const diff = touchStart.current - e.changedTouches[0].screenX;
-    if (Math.abs(diff) > 50) handleNav(diff > 0 ? 1 : -1);
+    if (Math.abs(diff) > 50) {
+      if (isMobile) { triggerMobileSlide(diff > 0 ? 1 : -1); return; }
+      handleNav(diff > 0 ? 1 : -1);
+    }
   };
 
   const handleNav = (dir: number) => {
     if (animating) return;
+    if (isMobile) { triggerMobileSlide(dir as 1 | -1); return; }
     setAnimating(true);
     setNameVisible(false);
     setCurrent((c) => ((c + dir) % videos.length + videos.length) % videos.length);
@@ -130,8 +175,8 @@ function VideoCarousel() {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-[#FAF8F5] pb-28"
-      style={{ minHeight: trackH + 300 }}
+      className="relative w-full overflow-hidden bg-[#FAF8F5] pb-0 md:pb-28"
+      style={{ minHeight: isMobile ? trackH + 160 : trackH + 300 }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -141,11 +186,11 @@ function VideoCarousel() {
         style={{
           top: 40,
           transform: "translateX(-50%)",
-          fontSize: isMobile ? "5rem" : "10rem",
+          fontSize: isMobile ? "3.5rem" : "10rem",
           letterSpacing: "-0.02em",
           fontFamily: '"Arial Black","Arial Bold",Arial,sans-serif',
           zIndex: 0,
-          background: "linear-gradient(to bottom, rgba(180,200,255,0.55) 25%, rgba(180,200,255,0) 75%)",
+          background: "linear-gradient(to bottom, rgba(180,200,255,0.55) 50%, rgba(180,200,255,0) 80%)",
           WebkitBackgroundClip: "text",
           backgroundClip: "text",
           color: "transparent",
@@ -163,15 +208,15 @@ function VideoCarousel() {
           maxWidth: 1300,
           height: trackH,
           perspective: "1200px",
-          marginTop: isMobile ? 90 : 130,
+          marginTop: isMobile ? 60 : 150,
           zIndex: 1,
         }}
       >
-        {/* Left arrow */}
+        {/* Left arrow — circle on desktop, plain on mobile */}
         <button
           onClick={() => handleNav(-1)}
-          className="absolute left-5 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-none pb-1 text-2xl text-gray-800 transition-all hover:scale-110"
-          style={{ background: "rgba(0,0,0,0.12)" }}
+          className="absolute left-3 md:left-5 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center border-none pb-1 text-gray-800 transition-all hover:scale-110 md:rounded-full"
+          style={{ background: isMobile ? "transparent" : "rgba(0,0,0,0.12)", fontSize: isMobile ? 32 : undefined }}
           aria-label="Previous"
         >
           ‹
@@ -180,57 +225,113 @@ function VideoCarousel() {
         {/* Track */}
         <div
           className="relative flex h-full w-full items-center justify-center"
-          style={{ transformStyle: "preserve-3d" }}
+          style={{ transformStyle: "preserve-3d", transform: isMobile ? undefined : "translateX(-50px)" }}
         >
-          {videos.map((video, i) => {
-            const pos = getPos(i);
-            const isCenter = pos === "center";
-            const thumb = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
-            return (
-              <div
-                key={video.id}
-                onClick={() => !isCenter && goTo(i)}
-                style={{
-                  position: "absolute",
-                  width: cardW,
-                  height: cardH,
-                  borderRadius: 20,
-                  overflow: "hidden",
-                  boxShadow: isCenter ? "0 20px 60px rgba(0,0,0,0.6)" : "0 20px 40px rgba(0,0,0,0.4)",
-                  transition: "all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)",
-                  ...styleMap[pos],
-                }}
-              >
-                {isCenter ? (
-                  <iframe
-                    src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=0&rel=0`}
-                    title={video.title}
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-                  />
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={thumb}
-                    alt={video.title}
-                    style={{
-                      width: "100%", height: "100%", objectFit: "cover",
-                      filter: "grayscale(100%)",
-                      transition: "all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)",
-                    }}
-                  />
-                )}
-              </div>
-            );
-          })}
+          {isMobile ? (
+            /* ── Mobile: horizontal slide between thumbnails ── */
+            <div
+              style={{
+                position: "absolute",
+                width: cardW,
+                height: cardH,
+                borderRadius: 20,
+                overflow: "hidden",
+                boxShadow: "0 20px 60px rgba(0,0,0,0.5)",
+              }}
+            >
+              {/* Outgoing card */}
+              {mobileAnim !== null && (() => {
+                const vid = videos[mobileAnim.prev];
+                const thumb = `https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`;
+                const exitX = mobileAnim.phase === "run"
+                  ? (mobileAnim.dir > 0 ? "-100%" : "100%")
+                  : "0%";
+                return (
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    transform: `translateX(${exitX})`,
+                    transition: mobileAnim.phase === "run" ? "transform 0.45s ease" : "none",
+                  }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={thumb} alt={vid.title}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                );
+              })()}
+              {/* Incoming card */}
+              {(() => {
+                const vid = videos[current];
+                const thumb = `https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`;
+                const enterX = mobileAnim
+                  ? mobileAnim.phase === "run"
+                    ? "0%"
+                    : (mobileAnim.dir > 0 ? "100%" : "-100%")
+                  : "0%";
+                return (
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    transform: `translateX(${enterX})`,
+                    transition: mobileAnim?.phase === "run" ? "transform 0.45s ease" : "none",
+                  }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={thumb} alt={vid.title}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  </div>
+                );
+              })()}
+            </div>
+          ) : (
+            /* ── Desktop: 3D fan carousel ── */
+            videos.map((video, i) => {
+              const pos = getPos(i);
+              const isCenter = pos === "center";
+              const thumb = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+              return (
+                <div
+                  key={video.id}
+                  onClick={() => !isCenter && goTo(i)}
+                  style={{
+                    position: "absolute",
+                    width: cardW,
+                    height: cardH,
+                    borderRadius: 20,
+                    overflow: "hidden",
+                    boxShadow: isCenter ? "0 20px 60px rgba(0,0,0,0.6)" : "0 20px 40px rgba(0,0,0,0.4)",
+                    transition: "all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)",
+                    ...styleMap[pos],
+                  }}
+                >
+                  {isCenter ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=0&rel=0`}
+                      title={video.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+                    />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={thumb}
+                      alt={video.title}
+                      style={{
+                        width: "100%", height: "100%", objectFit: "cover",
+                        filter: "grayscale(100%)",
+                        transition: "all 0.8s cubic-bezier(0.25,0.46,0.45,0.94)",
+                      }}
+                    />
+                  )}
+                </div>
+              );
+            })
+          )}
         </div>
 
-        {/* Right arrow */}
+        {/* Right arrow — circle on desktop, plain on mobile */}
         <button
           onClick={() => handleNav(1)}
-          className="absolute right-5 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-none pb-1 text-2xl text-gray-800 transition-all hover:scale-110"
-          style={{ background: "rgba(0,0,0,0.12)" }}
+          className="absolute right-3 md:right-5 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center border-none pb-1 text-gray-800 transition-all hover:scale-110 md:rounded-full"
+          style={{ background: isMobile ? "transparent" : "rgba(0,0,0,0.12)", fontSize: isMobile ? 32 : undefined }}
           aria-label="Next"
         >
           ›
@@ -482,19 +583,17 @@ function RouletteWheel() {
           onClick={stepLeft}
           disabled={busy}
           aria-label="Previous"
-          className="absolute left-2 md:left-6 z-50 flex items-center justify-center rounded-full text-gray-700 transition-all hover:scale-110 disabled:opacity-30"
+          className="absolute left-2 md:left-6 z-50 flex items-center justify-center text-gray-700 transition-all hover:scale-110 disabled:opacity-30 md:rounded-full md:bg-black/[0.06] md:border md:border-black/10"
           style={{
             top: "50%",
             transform: "translateY(-50%)",
             width: 40, height: 40,
-            background: "rgba(0,0,0,0.06)",
-            border: "1px solid rgba(0,0,0,0.10)",
-            fontSize: 22,
             lineHeight: 1,
             paddingBottom: 2,
           }}
         >
-          ‹
+          <span className="hidden md:inline" style={{ fontSize: 22 }}>‹</span>
+          <span className="md:hidden" style={{ fontSize: 32 }}>‹</span>
         </button>
 
         {/* Right arrow */}
@@ -502,19 +601,17 @@ function RouletteWheel() {
           onClick={stepRight}
           disabled={busy}
           aria-label="Next"
-          className="absolute right-2 md:right-6 z-50 flex items-center justify-center rounded-full text-gray-700 transition-all hover:scale-110 disabled:opacity-30"
+          className="absolute right-2 md:right-6 z-50 flex items-center justify-center text-gray-700 transition-all hover:scale-110 disabled:opacity-30 md:rounded-full md:bg-black/[0.06] md:border md:border-black/10"
           style={{
             top: "50%",
             transform: "translateY(-50%)",
             width: 40, height: 40,
-            background: "rgba(0,0,0,0.06)",
-            border: "1px solid rgba(0,0,0,0.10)",
-            fontSize: 22,
             lineHeight: 1,
             paddingBottom: 2,
           }}
         >
-          ›
+          <span className="hidden md:inline" style={{ fontSize: 22 }}>›</span>
+          <span className="md:hidden" style={{ fontSize: 32 }}>›</span>
         </button>
 
       <div
@@ -690,7 +787,7 @@ function RouletteWheel() {
 function Footer() {
   return (
     <footer className="w-full border-t border-gray-200 bg-[#EDE9E3] py-12 text-gray-500">
-      <div className="mx-auto max-w-screen-xl px-6">
+      <div className="mx-auto max-w-7xl px-6">
         <div className="flex flex-col items-center gap-8 md:flex-row md:items-start md:justify-between">
           <div className="flex flex-col items-center gap-3 md:items-start">
             <div className="flex items-center gap-3">
@@ -750,6 +847,15 @@ export default function Home() {
   const litsocRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
+    const mobile = window.matchMedia("(max-width: 768px)").matches;
+    if (mobile) {
+      // On mobile just show LITSOC immediately, no scroll animation
+      if (litsocRef.current) {
+        litsocRef.current.style.opacity = "1";
+        litsocRef.current.style.transform = "translate(-50%, -50%)";
+      }
+      return;
+    }
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -805,13 +911,13 @@ export default function Home() {
         </h1>
 
         {/* Content: image centred, description below */}
-        <div className="relative z-10 flex flex-col items-center gap-8 px-6 py-28 text-center">
+        <div className="relative z-10 flex flex-col items-center gap-2 md:gap-8 px-6 py-4 md:py-28 text-center">
           <Image
-            src="/group3.png"
+            src="/group.png"
             alt="Literary Society TIET Group Photo"
             width={900}
             height={600}
-            className="pt-30 w-full max-w-5xl object-cover"
+            className="w-max pt-0 md:pt-20 max-w-8xl object-cover -mt-20 md:mt-0"
             priority
           />
           <p className="max-w-2xl text-base leading-relaxed text-gray-500 font-lato">
@@ -821,7 +927,7 @@ export default function Home() {
         </div>
 
         {/* Scroll cue */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-400">
+        <div className="absolute bottom-4 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-400">
           <span className="text-xs tracking-widest uppercase">Scroll</span>
           <svg className="h-4 w-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
