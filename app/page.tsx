@@ -7,10 +7,16 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import EventCalendar from "@/components/EventCalendar";
 
-/* ─── Data ─────────────────────────────────────────────────────────────────── */
+/* ─── Types ──────────────────────────────────────────────────────────────────── */
 
-const YOUTUBE_EMBED = "https://www.youtube.com/embed/gxEPV4kolz0";
-const videos = Array(5).fill(YOUTUBE_EMBED);
+interface CarouselVideo {
+  id: string;
+  youtubeId: string;
+  title: string;
+  description: string;
+}
+
+/* ─── Data ─────────────────────────────────────────────────────────────────── */
 
 const subsocs = [
   { name: "PoetSoc",               icon: "/poetsoc.png",   href: "/poetsoc",    desc: "Where verses breathe and metaphors bloom." },
@@ -28,23 +34,31 @@ const NUM_ITEMS = subsocs.length; // 8
 
 /* ─── Video Carousel ─────────────────────────────────────────────────────────── */
 
-const videoData = [
-  { title: "LitSoc Showcase 2024",   label: "Annual Event" },
-  { title: "Poetry Slam Night",      label: "PoetSoc" },
-  { title: "DebSoc Grand Finale",    label: "Debate" },
-  { title: "Theatre Performance",    label: "Theatre Soc" },
-  { title: "Quiz Championship",      label: "TQC" },
-];
-
 type CardPos = "center" | "left-1" | "left-2" | "right-1" | "right-2" | "hidden";
 
+const FALLBACK_VIDEOS: CarouselVideo[] = [
+  { id: "1", youtubeId: "gxEPV4kolz0", title: "LitSoc Showcase 2024", description: "Annual Event" },
+  { id: "2", youtubeId: "gxEPV4kolz0", title: "Poetry Slam Night",     description: "PoetSoc"      },
+  { id: "3", youtubeId: "gxEPV4kolz0", title: "DebSoc Grand Finale",  description: "Debate"        },
+  { id: "4", youtubeId: "gxEPV4kolz0", title: "Theatre Performance",  description: "Theatre Soc"  },
+  { id: "5", youtubeId: "gxEPV4kolz0", title: "Quiz Championship",    description: "TQC"           },
+];
+
 function VideoCarousel() {
+  const [videos, setVideos] = useState<CarouselVideo[]>(FALLBACK_VIDEOS);
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [nameVisible, setNameVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(
     () => typeof window !== "undefined" ? window.matchMedia("(max-width: 768px)").matches : false
   );
+
+  useEffect(() => {
+    fetch("/api/carousel")
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data?.items?.length) setVideos(data.items); })
+      .catch(() => {/* keep fallback */});
+  }, []);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
@@ -88,8 +102,7 @@ function VideoCarousel() {
     return "hidden";
   };
 
-  const videoId   = "gxEPV4kolz0";
-  const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  // per-video thumbnail: each card uses its own youtubeId (see map below)
   /* card dimensions — 16:9 landscape video */
   const cardW = isMobile ? 300 : 560;
   const cardH = isMobile ? 169 : 315;
@@ -169,12 +182,13 @@ function VideoCarousel() {
           className="relative flex h-full w-full items-center justify-center"
           style={{ transformStyle: "preserve-3d" }}
         >
-          {videos.map((_, i) => {
+          {videos.map((video, i) => {
             const pos = getPos(i);
             const isCenter = pos === "center";
+            const thumb = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
             return (
               <div
-                key={i}
+                key={video.id}
                 onClick={() => !isCenter && goTo(i)}
                 style={{
                   position: "absolute",
@@ -189,8 +203,8 @@ function VideoCarousel() {
               >
                 {isCenter ? (
                   <iframe
-                    src={`${videos[i]}?autoplay=0&rel=0`}
-                    title={`LitSoc video ${i + 1}`}
+                    src={`https://www.youtube.com/embed/${video.youtubeId}?autoplay=0&rel=0`}
+                    title={video.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
                     style={{ width: "100%", height: "100%", border: "none", display: "block" }}
@@ -198,8 +212,8 @@ function VideoCarousel() {
                 ) : (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={thumbnail}
-                    alt={`Video ${i + 1}`}
+                    src={thumb}
+                    alt={video.title}
                     style={{
                       width: "100%", height: "100%", objectFit: "cover",
                       filter: "grayscale(100%)",
@@ -230,17 +244,17 @@ function VideoCarousel() {
       >
         <h2 className="relative inline-block text-4xl font-bold text-indigo-600 md:text-5xl">
           <span className="absolute top-1/2 right-full mr-6 hidden h-px w-28 -translate-y-1/2 bg-indigo-400/40 md:block" />
-          {videoData[current].title}
+          {videos[current]?.title ?? ""}
           <span className="absolute top-1/2 left-full ml-6 hidden h-px w-28 -translate-y-1/2 bg-indigo-400/40 md:block" />
         </h2>
         <p className="mt-3 text-md font-medium uppercase tracking-widest text-gray-400">
-          {videoData[current].label}
+          {videos[current]?.description ?? ""}
         </p>
       </div>
 
       {/* ── Dots ── */}
       <div className="relative mt-8 flex justify-center gap-2.5" style={{ zIndex: 1 }}>
-        {videos.map((_, i) => (
+        {videos.map((_v, i) => (
           <button
             key={i}
             onClick={() => goTo(i)}
@@ -793,11 +807,11 @@ export default function Home() {
         {/* Content: image centred, description below */}
         <div className="relative z-10 flex flex-col items-center gap-8 px-6 py-28 text-center">
           <Image
-            src="/group.png"
+            src="/group3.png"
             alt="Literary Society TIET Group Photo"
             width={900}
             height={600}
-            className="w-full max-w-4xl object-cover"
+            className="pt-30 w-full max-w-5xl object-cover"
             priority
           />
           <p className="max-w-2xl text-base leading-relaxed text-gray-500 font-lato">
