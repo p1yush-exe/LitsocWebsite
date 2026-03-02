@@ -6,11 +6,11 @@
 
   /* Section gradient (available for decorative use) */
   --gradient-start: rgba(104, 144, 252, 0.55);
-  --gradient-end:   rgba(104, 144, 252, 0.55);
+  --gradient-end:   #faeade;
 
   /* Ghost heading text gradient */
-  --ghost-text-start: rgba(49, 151, 164,1);
-  --ghost-text-end:   rgba(41, 170, 188, 0);
+  --ghost-text-start: rgba(104, 227, 252, 0.55);
+  --ghost-text-end:   rgba(156, 227, 251, 0);
 }
 
 /* ── Theme tokens (colors + fonts) ────────────────────────── */
@@ -49,43 +49,67 @@
 }
 
 /* ── Base ──────────────────────────────────────────────────── */
+* {
+  scrollbar-width: none; /* Firefox */
+}
+*::-webkit-scrollbar {
+  display: none; /* Chrome / Safari / Edge */
+}
+
 body {
   background: #faeade;
   color: var(--foreground);
   font-family: var(--font-proxima-nova), sans-serif;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-antonio), "Antonio", sans-serif;
 }
 
+/* Reset browser visited-link colour so Tailwind text utilities always win */
+a, a:visited {
+  color: inherit;
+}
+
 /* ── Component classes ─────────────────────────────────────── */
 @layer components {
   /* Roulette / section label (e.g. "Our Sub-Societies") */
   .section-label {
-    @apply font-lato text-xs font-semibold uppercase tracking-[0.28em] text-red-brown mb-1;
+    @apply font-lato text-xs font-semibold uppercase mb-1 text-red-brown;
+    letter-spacing: 0.28em;
   }
 
   /* Roulette / section main heading (e.g. "CHOOSE YOUR VICE") */
   .section-heading {
-    @apply font-antonio text-4xl md:text-5xl font-bold text-dark-brown mb-1 tracking-[-0.01em];
+    @apply font-antonio text-4xl md:text-5xl font-bold text-foreground mb-1;
+    letter-spacing: -0.01em;
   }
 
   /* Roulette / section hint/sub-text */
   .section-hint {
-    @apply font-lato text-sm text-mid-brown mt-2 opacity-75;
+    @apply font-lato text-sm mt-2 opacity-75;
+    color: #a26833;
   }
 
   /* Shared prev/next arrow navigation button */
   .btn-nav-arrow {
-    @apply absolute z-50 flex items-center justify-center w-10 h-10 leading-none pb-[2px]
-           text-dark-brown transition-transform duration-150 top-1/2 -translate-y-1/2;
-
-    &:hover    { @apply scale-110 -translate-y-1/2; }
-    &:disabled { @apply opacity-30; }
-
-    @media (min-width: 768px) {
-      @apply rounded-full bg-black/[0.06] border border-black/10;
-    }
+    @apply absolute z-50 flex items-center justify-center w-10 h-10 leading-none pb-0.5
+           text-foreground transition-transform duration-[150ms] ease-in-out
+           top-1/2 -translate-y-1/2
+           md:rounded-full md:bg-black/6 md:border md:border-black/10;
   }
+
+  .btn-nav-arrow:hover { @apply scale-110 -translate-y-1/2; }
+  .btn-nav-arrow:disabled { @apply opacity-30; }
+}
+
+/* ── Ghost-title animations ────────────────────────────────── */
+@keyframes litsoc-pop {
+  0%   { transform: translateY(40px); opacity: 0; }
+  100% { transform: translateY(0);    opacity: 1; }
+}
+
+.litsoc-pop {
+  animation: litsoc-pop 1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }

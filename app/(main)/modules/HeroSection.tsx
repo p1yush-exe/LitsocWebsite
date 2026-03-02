@@ -1,72 +1,54 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useState } from "react";
 
 export default function HeroSection() {
-  const heroRef   = useRef<HTMLElement>(null);
-  const litsocRef = useRef<HTMLHeadingElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  // Delays the LITSOC pop animation until the page loader has exited.
+  const [animReady, setAnimReady] = useState(false);
 
   useEffect(() => {
-    const mobile = window.matchMedia("(max-width: 768px)").matches;
-    if (mobile) {
-      if (litsocRef.current) {
-        litsocRef.current.style.opacity = "1";
-        litsocRef.current.style.transform = "translate(-50%, -50%)";
-      }
-      return;
-    }
-    gsap.registerPlugin(ScrollTrigger);
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        litsocRef.current,
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1,
-          y: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroRef.current,
-            start: "top top",
-            end: "+=560",
-            scrub: 1.2,
-            pin: true,
-          },
-        }
-      );
-    });
-    return () => ctx.revert();
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  useEffect(() => {
+    // "app:loaded" is dispatched by PageLoader just as it starts to fade out.
+    // Add a small extra delay so the animation begins on a clean screen.
+    const onLoaded = () => setTimeout(() => setAnimReady(true), 120);
+    window.addEventListener("app:loaded", onLoaded, { once: true });
+    return () => window.removeEventListener("app:loaded", onLoaded);
   }, []);
 
   return (
     <section
-      ref={heroRef}
       className="pt-30 relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-milk"
     >
-      {/* LITSOC ghost title — animated in by GSAP ScrollTrigger */}
-      <h1
-        ref={litsocRef}
-        className="pointer-events-none absolute left-1/2 text-center font-black uppercase leading-none"
-        style={{
-          top: "20%",
-          transform: "translate(-50%, -50%)",
-          fontSize: "clamp(6rem, 29vw, 30rem)",
-          letterSpacing: "-0.02em",
-          fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
-          zIndex: 0,
-          background: "linear-gradient(to bottom, var(--ghost-text-start) 40%, var(--ghost-text-end) 80%)",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          color: "transparent",
-          userSelect: "none",
-          whiteSpace: "nowrap",
-          opacity: 0,
-        }}
+      {/* LITSOC ghost title */}
+      <div
+        className="pointer-events-none absolute left-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{ top: "20%", zIndex: 0 }}
       >
-        LITSOC
-      </h1>
+        <h1
+          className={`${animReady ? "litsoc-pop" : "opacity-0"} text-center font-black uppercase leading-none`}
+          style={{
+            fontSize: isMobile ? "clamp(6rem, 35vw, 30rem)" : "clamp(6rem, 29vw, 30rem)",
+            letterSpacing: "-0.02em",
+            fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
+            background: "linear-gradient(to bottom, var(--ghost-text-start) 40%, var(--ghost-text-end) 80%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text",
+            color: "transparent",
+            userSelect: "none",
+            whiteSpace: "nowrap",
+          }}
+        >
+          LITSOC
+        </h1>
+      </div>
 
       {/* Content: image centred, description below */}
       <div className="relative z-10 flex flex-col items-center gap-2 md:gap-8 px-6 py-4 md:py-28 text-center">
@@ -75,10 +57,10 @@ export default function HeroSection() {
           alt="Literary Society TIET Group Photo"
           width={900}
           height={600}
-          className="w-max pt-0 md:pt-20 max-w-8xl object-cover -mt-20 md:mt-0"
+          className="w-max md:pt-20 max-w-8xl object-cover -mt-20 md:mt-0"
           priority
         />
-        <p className="max-w-2xl text-base leading-relaxed text-gray-500 font-lato">
+        <p className="max-w-2xl text-base leading-relaxed text-dark-brown font-lato">
           A confluence of words, ideas, and voices — TIET&apos;s home for poetry,
           debate, theatre, cinema, quizzing, and every form of literary expression.
         </p>

@@ -14,9 +14,13 @@ interface CarouselVideo {
 type CardPos = "center" | "left-1" | "left-2" | "right-1" | "right-2" | "hidden";
 type MobileAnim = { prev: number; dir: 1 | -1; phase: "init" | "run" } | null;
 
-/* ─── Data ────────────────────────────────────────────────────────────────── */
+/* ─── Data ────────────────────────────────────────────────────────────────── *
+ *  To add / edit videos, update the VIDEOS array below.                      *
+ *  Each entry needs: a unique `id`, a YouTube video `youtubeId`,             *
+ *  a `title` shown below the carousel, and a `description` sub-label.       *
+ * ─────────────────────────────────────────────────────────────────────────── */
 
-const FALLBACK_VIDEOS: CarouselVideo[] = [
+const VIDEOS: CarouselVideo[] = [
   { id: "1", youtubeId: "gxEPV4kolz0", title: "LitSoc Showcase 2024", description: "Annual Event" },
   { id: "2", youtubeId: "gxEPV4kolz0", title: "Poetry Slam Night",     description: "PoetSoc"      },
   { id: "3", youtubeId: "gxEPV4kolz0", title: "DebSoc Grand Finale",  description: "Debate"        },
@@ -27,7 +31,7 @@ const FALLBACK_VIDEOS: CarouselVideo[] = [
 /* ─── Component ───────────────────────────────────────────────────────────── */
 
 export default function EventsCarousel() {
-  const [videos, setVideos] = useState<CarouselVideo[]>(FALLBACK_VIDEOS);
+  const videos = VIDEOS;
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [nameVisible, setNameVisible] = useState(true);
@@ -41,6 +45,8 @@ export default function EventsCarousel() {
     () => false,
   );
   const [mobileAnim, setMobileAnim] = useState<MobileAnim>(null);
+  const [eventsPopped, setEventsPopped] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
 
   /* stable refs so interval/rAF never sees stale values */
   const animatingRef = useRef(animating);
@@ -51,13 +57,6 @@ export default function EventsCarousel() {
     currentRef.current   = current;
     videosRef.current    = videos;
   });
-
-  useEffect(() => {
-    fetch("/api/carousel")
-      .then(r => r.ok ? r.json() : null)
-      .then(data => { if (data?.items?.length) setVideos(data.items); })
-      .catch(() => {/* keep fallback */});
-  }, []);
 
   /* ── Mobile swipe helper (shared by auto-advance + touch + handleNav) ── */
   const triggerMobileSlide = (dir: 1 | -1) => {
@@ -79,6 +78,18 @@ export default function EventsCarousel() {
       });
     });
   };
+
+  /* ── Scroll-in reveal for ghost title ── */
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setEventsPopped(true); observer.disconnect(); } },
+      { threshold: 0.15 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   /* ── Mobile auto-advance: one video every 3 s ── */
   useEffect(() => {
@@ -151,6 +162,7 @@ export default function EventsCarousel() {
 
   return (
     <section
+      ref={sectionRef}
       className="relative w-full overflow-hidden bg-milk pb-0 md:pb-28"
       style={{ minHeight: isMobile ? trackH + 160 : trackH + 300 }}
       onTouchStart={onTouchStart}
@@ -161,8 +173,12 @@ export default function EventsCarousel() {
         className="pointer-events-none absolute left-1/2 whitespace-nowrap font-black uppercase leading-none"
         style={{
           top: 40,
-          transform: "translateX(-50%)",
-          fontSize: isMobile ? "3.5rem" : "10rem",
+          transform: eventsPopped
+            ? "translateX(-50%) translateY(-20%)"
+            : "translateX(-50%) translateY(30%)",
+          opacity: eventsPopped ? 1 : 0,
+          transition: "transform 0.85s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.6s ease",
+          fontSize: isMobile ? "3.5rem" : "13rem",
           letterSpacing: "-0.02em",
           fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
           zIndex: 0,
@@ -191,7 +207,7 @@ export default function EventsCarousel() {
         {/* Left arrow */}
         <button
           onClick={() => handleNav(-1)}
-          className="btn-nav-arrow left-3 md:left-5"
+          className="btn-nav-arrow left-3 md:-left-10"
           style={{ background: isMobile ? "transparent" : "rgba(0,0,0,0.12)", fontSize: isMobile ? 32 : undefined }}
           aria-label="Previous"
         >
@@ -201,7 +217,7 @@ export default function EventsCarousel() {
         {/* Track */}
         <div
           className="relative flex h-full w-full items-center justify-center"
-          style={{ transformStyle: "preserve-3d", transform: isMobile ? undefined : "translateX(-50px)" }}
+          style={{ transformStyle: "preserve-3d", transform: isMobile ? undefined : "translateX(0px)" }}
         >
           {isMobile ? (
             <div
@@ -304,7 +320,7 @@ export default function EventsCarousel() {
         {/* Right arrow */}
         <button
           onClick={() => handleNav(1)}
-          className="btn-nav-arrow right-3 md:right-5"
+          className="btn-nav-arrow right-3 md:-right-10"
           style={{ background: isMobile ? "transparent" : "rgba(0,0,0,0.12)", fontSize: isMobile ? 32 : undefined }}
           aria-label="Next"
         >
@@ -317,12 +333,12 @@ export default function EventsCarousel() {
         className="relative mt-12 text-center transition-all duration-500"
         style={{ zIndex: 1, opacity: nameVisible ? 1 : 0 }}
       >
-        <h2 className="relative inline-block text-4xl font-bold text-indigo-600 md:text-5xl">
-          <span className="absolute top-1/2 right-full mr-6 hidden h-px w-28 -translate-y-1/2 bg-indigo-400/40 md:block" />
+        <h2 className="relative inline-block text-4xl font-bold text-dark-brown md:text-5xl">
+          <span className="absolute top-1/2 right-full mr-6 hidden h-px w-28 -translate-y-1/2 bg-mid-brown/40 md:block" />
           {videos[current]?.title ?? ""}
-          <span className="absolute top-1/2 left-full ml-6 hidden h-px w-28 -translate-y-1/2 bg-indigo-400/40 md:block" />
+          <span className="absolute top-1/2 left-full ml-6 hidden h-px w-28 -translate-y-1/2 bg-mid-brown/40 md:block" />
         </h2>
-        <p className="mt-3 text-md font-medium uppercase tracking-widest text-gray-400 font-lato">
+        <p className="mt-3 text-md font-medium uppercase tracking-widest text-mid-brown/70 font-lato">
           {videos[current]?.description ?? ""}
         </p>
       </div>
@@ -339,7 +355,7 @@ export default function EventsCarousel() {
               border: "none",
               cursor: "pointer",
               transition: "all 0.3s ease",
-              background: i === current ? "rgb(129,140,248)" : "rgba(99,102,241,0.2)",
+              background: i === current ? "#a26833" : "rgba(162,104,51,0.2)",
               transform: i === current ? "scale(1.2)" : "scale(1)",
             }}
             aria-label={`Go to video ${i + 1}`}

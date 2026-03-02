@@ -368,13 +368,13 @@ export default function RouletteSection() {
 
       {/* Info strip */}
       <div className="relative z-10 mt-5 text-center px-4">
-        <p className="text-base font-semibold text-gray-900 tracking-wide font-antonio" style={{ letterSpacing: "0.04em" }}>
+        <p className="text-base font-semibold text-dark-brown tracking-wide font-antonio" style={{ letterSpacing: "0.04em" }}>
           {subsocs[centerIdx].name}
         </p>
-        <p className="mt-1 text-sm text-gray-500 max-w-xs mx-auto font-lato">
+        <p className="mt-1 text-sm text-dark-brown max-w-xs mx-auto font-lato">
           {subsocs[centerIdx].desc}
         </p>
-        <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-gray-400 font-lato">
+        <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-brown-red font-lato">
           pull trigger to enter
         </p>
       </div>

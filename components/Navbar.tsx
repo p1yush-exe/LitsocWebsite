@@ -30,10 +30,10 @@ export default function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [atTop, setAtTop] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setAtTop(window.scrollY < 8);
+    const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -43,14 +43,8 @@ export default function Navbar() {
   };
 
   return (
-    <nav
-      className={`sticky top-0 z-40 w-full transition-all duration-300 ${
-        atTop
-          ? "border-b border-transparent bg-milk shadow-none"
-          : "border-b border-red-brown/20 bg-milk/95 shadow-sm backdrop-blur-sm"
-      }`}
-    >
-      <div className="relative z-10 mx-5 flex h-14 max-w-7xl items-center justify-between px-6">
+    <nav className={`sticky top-0 z-40 w-full bg-milk transition-[border-color] duration-300 ${scrolled ? "border-b border-red-brown/20 shadow-sm" : "border-b border-transparent"}`}>
+      <div className="relative z-10 flex h-14 w-full items-center justify-between px-4 md:px-8 lg:px-14">
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Image src="/logo.png" alt="LitSoc Logo" width={70} height={70} className="rounded-full" />
 
@@ -67,7 +61,7 @@ export default function Navbar() {
               <div key={link.label} className="relative">
                 <button
                   onClick={() => toggleDropdown(link.label)}
-                  className="flex items-center gap-1 rounded px-3 py-1.5 text-sm font-medium text-dark-brown transition-colors hover:text-gray-950"
+                  className="flex items-center gap-1 rounded px-3 py-1.5 text-sm font-medium text-dark-brown hover:font-bold"
                 >
                   {link.label}
                   <svg
@@ -87,12 +81,12 @@ export default function Navbar() {
                   </svg>
                 </button>
                 {openDropdown === link.label && (
-                  <div className="absolute left-0 top-full mt-1 min-w-[160px] rounded-md border border-red-brown/20 bg-milk/98 py-1 shadow-lg backdrop-blur-sm">
+                  <div className="absolute left-0 top-full mt-1 min-w-[160px] rounded-md border border-red-brown/20 bg-milk py-1 shadow-lg">
                     {link.dropdown.map((item) => (
                       <Link
                         key={item.label}
                         href={item.href}
-                        className="block px-4 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-950"
+                        className="block px-4 py-2 text-sm text-dark-brown transition-colors hover:font-bold "
                         onClick={() => setOpenDropdown(null)}
                       >
                         {item.label}
@@ -105,7 +99,7 @@ export default function Navbar() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="rounded px-3 py-1.5 text-sm font-medium text-gray-700 transition-colors hover:text-gray-950"
+                className="rounded px-3 py-1.5 text-sm font-medium text-dark-brown transition-colors hover:font-bold "
               >
                 {link.label}
               </Link>
@@ -115,7 +109,7 @@ export default function Navbar() {
           {/* Search icon */}
           <button
             onClick={() => setSearchOpen(!searchOpen)}
-            className="ml-2 rounded p-1.5 text-gray-500 transition-colors hover:text-gray-900"
+            className="ml-2 rounded p-1.5 text-dark-brown transition-colors hover:font-bold "
             aria-label="Search"
           >
             <svg
@@ -141,25 +135,25 @@ export default function Navbar() {
           aria-label="Toggle menu"
         >
           <span
-            className={`block h-0.5 w-5 bg-gray-800 transition-transform duration-200 ${mobileMenuOpen ? "translate-y-1.5 rotate-45" : ""}`}
+            className={`block h-0.5 w-5 bg-dark-brown transition-transform duration-200 ${mobileMenuOpen ? "translate-y-1.5 rotate-45" : ""}`}
           />
           <span
-            className={`block h-0.5 w-5 bg-gray-800 transition-opacity duration-200 ${mobileMenuOpen ? "opacity-0" : ""}`}
+            className={`block h-0.5 w-5 bg-dark-brown transition-opacity duration-200 ${mobileMenuOpen ? "opacity-0" : ""}`}
           />
           <span
-            className={`block h-0.5 w-5 bg-gray-800 transition-transform duration-200 ${mobileMenuOpen ? "-translate-y-1.5 -rotate-45" : ""}`}
+            className={`block h-0.5 w-5 bg-dark-brown transition-transform duration-200 ${mobileMenuOpen ? "-translate-y-1.5 -rotate-45" : ""}`}
           />
         </button>
       </div>
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="relative z-10 border-t border-red-brown/20 bg-milk/98 px-6 py-3 md:hidden">
+        <div className="relative z-10 border-t border-red-brown/20 bg-milk px-6 py-3 md:hidden">
           {navLinks.map((link) => (
             <div key={link.label}>
               <Link
                 href={link.href}
-                className="block py-2 text-sm font-medium text-gray-700 hover:text-gray-950"
+                className="block py-2 text-sm font-medium text-dark-brown hover:font-bold"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {link.label}
@@ -170,7 +164,7 @@ export default function Navbar() {
                     <Link
                       key={item.label}
                       href={item.href}
-                      className="block py-1.5 text-sm text-gray-500 hover:text-gray-950"
+                      className="block py-1.5 text-sm hover:font-bold"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {item.label}

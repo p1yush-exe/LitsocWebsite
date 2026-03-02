@@ -26,6 +26,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Disable browser scroll restoration so the page always starts at the top */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `history.scrollRestoration='manual';window.scrollTo(0,0);`,
+          }}
+        />
+      </head>
       <body
         className={`${antonio.variable} ${proximaNova.variable} antialiased`}
         suppressHydrationWarning
