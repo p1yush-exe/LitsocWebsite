@@ -24,7 +24,7 @@ const SUBSOC_COLORS: Record<string, { bg: string; text: string }> = {
 };
 
 function subsocColor(subsoc: string) {
-  return SUBSOC_COLORS[subsoc] ?? { bg: "#f3f4f6", text: "#374151" };
+  return SUBSOC_COLORS[subsoc] ?? { bg: "#e3d3bc", text: "#523122" };
 }
 
 /* ─── Format date for display ────────────────────────────────────────────────── */
@@ -42,7 +42,7 @@ function formatDate(dateStr: string, time?: string): string {
 
 /* ─── Fallback gradient bg when no image ────────────────────────────────────── */
 const FALLBACK_GRADIENT =
-  "linear-gradient(135deg, #e0e7ff 0%, #f5d0fe 100%)";
+  "linear-gradient(135deg, #e3d3bc 0%, #e3a458 100%)";
 
 /* ─── Event Card ─────────────────────────────────────────────────────────────── */
 export default function EventCard({ event, onClose }: EventCardProps) {
@@ -69,7 +69,7 @@ export default function EventCard({ event, onClose }: EventCardProps) {
   if (event.isPast) {
     return (
       <div
-        className="fixed inset-0 z-[9998] flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-center justify-center"
         onClick={onClose}
         style={{ background: "rgba(0,0,0,0.72)", backdropFilter: "blur(2px)" }}
       >
@@ -161,14 +161,14 @@ export default function EventCard({ event, onClose }: EventCardProps) {
   /* ── UPCOMING EVENT — split card: text left, image right ── */
   return (
     <div
-      className="fixed inset-0 z-[9998] flex items-center justify-center px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center px-4"
       onClick={onClose}
       style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(3px)" }}
     >
       <div
         className="relative flex w-full max-w-3xl flex-col overflow-hidden rounded-3xl shadow-2xl md:flex-row"
         onClick={(e) => e.stopPropagation()}
-        style={{ background: "#faf8f5", minHeight: 340 }}
+        style={{ background: "#faeade", minHeight: 340 }}
       >
         {/* ── Left: text content ── */}
         <div className="flex flex-1 flex-col justify-center gap-4 p-8 md:p-10">
@@ -180,13 +180,12 @@ export default function EventCard({ event, onClose }: EventCardProps) {
           </span>
 
           <h2
-            className="text-2xl font-bold leading-tight text-gray-900 md:text-3xl"
-            style={{ fontFamily: "Georgia, serif" }}
+            className="font-antonio text-2xl font-bold leading-tight text-dark-brown md:text-3xl"
           >
             {event.title}
           </h2>
 
-          <p className="flex items-center gap-2 text-sm font-medium text-rose-500">
+          <p className="flex items-center gap-2 text-sm font-medium text-red">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4 shrink-0">
               <rect x="3" y="4" width="18" height="18" rx="2" />
               <line x1="16" y1="2" x2="16" y2="6" />
@@ -197,7 +196,7 @@ export default function EventCard({ event, onClose }: EventCardProps) {
           </p>
 
           {event.description && (
-            <p className="text-sm leading-relaxed text-gray-500 max-w-xs">
+            <p className="text-sm leading-relaxed text-mid-brown max-w-xs">
               {event.description}
             </p>
           )}
@@ -205,7 +204,7 @@ export default function EventCard({ event, onClose }: EventCardProps) {
           <div className="mt-2 flex gap-2">
             <button
               onClick={onClose}
-              className="rounded-full px-5 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-100"
+              className="rounded-full px-5 py-2 text-sm font-medium text-dark-brown bg-milk-yellow transition-colors hover:font-bold"
             >
               Close
             </button>
@@ -229,7 +228,7 @@ export default function EventCard({ event, onClose }: EventCardProps) {
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to right, #faf8f5 0%, transparent 30%)",
+              background: "linear-gradient(to right, #faeade 0%, transparent 30%)",
             }}
           />
         </div>
@@ -238,7 +237,7 @@ export default function EventCard({ event, onClose }: EventCardProps) {
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-4 right-4 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white/80 text-gray-500 transition-all hover:scale-110 hover:bg-white"
+          className="absolute top-4 right-4 z-20 flex h-8 w-8 items-center justify-center rounded-full border border-milk-yellow bg-milk/80 text-dark-brown transition-all hover:scale-110 hover:bg-milk"
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="h-4 w-4">
             <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />

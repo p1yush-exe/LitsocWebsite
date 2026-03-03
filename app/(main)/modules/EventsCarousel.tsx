@@ -35,15 +35,15 @@ export default function EventsCarousel() {
   const [current, setCurrent] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [nameVisible, setNameVisible] = useState(true);
-  const isMobile = useSyncExternalStore(
+  const viewportW = useSyncExternalStore(
     (cb) => {
-      const mq = window.matchMedia("(max-width: 768px)");
-      mq.addEventListener("change", cb);
-      return () => mq.removeEventListener("change", cb);
+      window.addEventListener("resize", cb);
+      return () => window.removeEventListener("resize", cb);
     },
-    () => window.matchMedia("(max-width: 768px)").matches,
-    () => false,
+    () => window.innerWidth,
+    () => 1440,
   );
+  const isMobile = viewportW <= 768;
   const [mobileAnim, setMobileAnim] = useState<MobileAnim>(null);
   const [eventsPopped, setEventsPopped] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
@@ -137,16 +137,20 @@ export default function EventsCarousel() {
     return "hidden";
   };
 
-  const cardW = isMobile ? 300 : 560;
-  const cardH = isMobile ? 169 : 315;
+  /* Scales the desktop carousel linearly from 1.0 at 1440 px down to ~0.53 at 768 px */
+  const desktopScale = isMobile ? 1 : Math.min(1, viewportW / 1440);
+  const cardW = isMobile ? 300 : Math.round(560 * desktopScale);
+  const cardH = isMobile ? 169 : Math.round(315 * desktopScale);
+  const off1  = Math.round(310 * desktopScale);
+  const off2  = Math.round(580 * desktopScale);
 
   const pos2style: Record<CardPos, React.CSSProperties> = {
-    "center":  { zIndex: 10, transform: "scale(1.08) translateZ(0)",                         opacity: 1,   cursor: "default"  },
-    "left-1":  { zIndex:  5, transform: "translateX(-310px) scale(0.82) translateZ(-100px)", opacity: 0.9, cursor: "pointer"  },
-    "left-2":  { zIndex:  1, transform: "translateX(-580px) scale(0.65) translateZ(-300px)", opacity: 0.6, cursor: "pointer"  },
-    "right-1": { zIndex:  5, transform: "translateX(310px) scale(0.82) translateZ(-100px)",  opacity: 0.9, cursor: "pointer"  },
-    "right-2": { zIndex:  1, transform: "translateX(580px) scale(0.65) translateZ(-300px)",  opacity: 0.6, cursor: "pointer"  },
-    "hidden":  { zIndex:  0, opacity: 0, pointerEvents: "none", transform: "scale(0.5)"    },
+    "center":  { zIndex: 10, transform: "scale(1.08) translateZ(0)",                                           opacity: 1,   cursor: "default"  },
+    "left-1":  { zIndex:  5, transform: `translateX(-${off1}px) scale(0.82) translateZ(-100px)`,               opacity: 0.9, cursor: "pointer"  },
+    "left-2":  { zIndex:  1, transform: `translateX(-${off2}px) scale(0.65) translateZ(-300px)`,               opacity: 0.6, cursor: "pointer"  },
+    "right-1": { zIndex:  5, transform: `translateX(${off1}px) scale(0.82) translateZ(-100px)`,                opacity: 0.9, cursor: "pointer"  },
+    "right-2": { zIndex:  1, transform: `translateX(${off2}px) scale(0.65) translateZ(-300px)`,                opacity: 0.6, cursor: "pointer"  },
+    "hidden":  { zIndex:  0, opacity: 0, pointerEvents: "none", transform: "scale(0.5)"                      },
   };
   const pos2styleMobile: Record<CardPos, React.CSSProperties> = {
     "center":  { zIndex: 10, transform: "scale(1.05) translateZ(0)",                         opacity: 1,   cursor: "default" },
@@ -158,13 +162,13 @@ export default function EventsCarousel() {
   };
   const styleMap = isMobile ? pos2styleMobile : pos2style;
 
-  const trackH = isMobile ? 260 : 375;
+  const trackH = isMobile ? 260 : Math.round(375 * desktopScale);
 
   return (
     <section
       ref={sectionRef}
       className="relative w-full overflow-hidden bg-milk pb-0 md:pb-28"
-      style={{ minHeight: isMobile ? trackH + 160 : trackH + 300 }}
+      style={{ minHeight: isMobile ? trackH + 20 : trackH + 300 }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
@@ -172,13 +176,13 @@ export default function EventsCarousel() {
       <h1
         className="pointer-events-none absolute left-1/2 whitespace-nowrap font-black uppercase leading-none"
         style={{
-          top: 40,
+          top: isMobile ? 10 : 40,
           transform: eventsPopped
             ? "translateX(-50%) translateY(-20%)"
             : "translateX(-50%) translateY(30%)",
           opacity: eventsPopped ? 1 : 0,
           transition: "transform 0.85s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.6s ease",
-          fontSize: isMobile ? "3.5rem" : "13rem",
+          fontSize: isMobile ? "3.5rem" : `${13 * desktopScale}rem`,
           letterSpacing: "-0.02em",
           fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
           zIndex: 0,
@@ -200,7 +204,7 @@ export default function EventsCarousel() {
           maxWidth: 1300,
           height: trackH,
           perspective: "1200px",
-          marginTop: isMobile ? 60 : 150,
+          marginTop: isMobile ? 2 : Math.round(150 * desktopScale),
           zIndex: 1,
         }}
       >
@@ -208,7 +212,7 @@ export default function EventsCarousel() {
         <button
           onClick={() => handleNav(-1)}
           className="btn-nav-arrow left-3 md:-left-10"
-          style={{ background: isMobile ? "transparent" : "rgba(0,0,0,0.12)", fontSize: isMobile ? 32 : undefined }}
+          style={{ background: "transparent", border: "none", fontSize: isMobile ? 32 : 70 }}
           aria-label="Previous"
         >
           ‹
@@ -321,7 +325,7 @@ export default function EventsCarousel() {
         <button
           onClick={() => handleNav(1)}
           className="btn-nav-arrow right-3 md:-right-10"
-          style={{ background: isMobile ? "transparent" : "rgba(0,0,0,0.12)", fontSize: isMobile ? 32 : undefined }}
+          style={{ background: "transparent", border: "none", fontSize: isMobile ? 32 : 80 }}
           aria-label="Next"
         >
           ›
@@ -330,7 +334,7 @@ export default function EventsCarousel() {
 
       {/* ── Video info below carousel ── */}
       <div
-        className="relative mt-12 text-center transition-all duration-500"
+        className="relative -mt-3 md:mt-12 text-center transition-all duration-500"
         style={{ zIndex: 1, opacity: nameVisible ? 1 : 0 }}
       >
         <h2 className="relative inline-block text-4xl font-bold text-dark-brown md:text-5xl">
@@ -344,7 +348,7 @@ export default function EventsCarousel() {
       </div>
 
       {/* ── Dots ── */}
-      <div className="relative mt-8 flex justify-center gap-2.5" style={{ zIndex: 1 }}>
+      <div className="relative mt-2 md:mt-8 flex justify-center gap-2.5" style={{ zIndex: 1 }}>
         {videos.map((_v, i) => (
           <button
             key={i}

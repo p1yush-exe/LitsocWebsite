@@ -4,16 +4,8 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function HeroSection() {
-  const [isMobile, setIsMobile] = useState(false);
   // Delays the LITSOC pop animation until the page loader has exited.
   const [animReady, setAnimReady] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
 
   useEffect(() => {
     // "app:loaded" is dispatched by PageLoader just as it starts to fade out.
@@ -25,7 +17,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="pt-30 relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-milk"
+      className="pt-30 relative flex md:min-h-screen w-full flex-col items-center justify-start md:justify-center overflow-hidden bg-milk pb-3 md:pb-0"
     >
       {/* LITSOC ghost title */}
       <div
@@ -33,9 +25,8 @@ export default function HeroSection() {
         style={{ top: "20%", zIndex: 0 }}
       >
         <h1
-          className={`${animReady ? "litsoc-pop" : "opacity-0"} text-center font-black uppercase leading-none`}
+          className={`${animReady ? "litsoc-pop" : "opacity-0"} text-center font-black uppercase leading-none text-[clamp(6rem,35vw,30rem)] md:text-[clamp(6rem,29vw,30rem)]`}
           style={{
-            fontSize: isMobile ? "clamp(6rem, 35vw, 30rem)" : "clamp(6rem, 29vw, 30rem)",
             letterSpacing: "-0.02em",
             fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
             background: "linear-gradient(to bottom, var(--ghost-text-start) 40%, var(--ghost-text-end) 80%)",
@@ -51,25 +42,33 @@ export default function HeroSection() {
       </div>
 
       {/* Content: image centred, description below */}
-      <div className="relative z-10 flex flex-col items-center gap-2 md:gap-8 px-6 py-4 md:py-28 text-center">
+      <div className="relative z-10 flex flex-col items-center gap-2 md:gap-8 px-6 py-1 md:py-28 text-center">
         <Image
           src="/group.png"
           alt="Literary Society TIET Group Photo"
           width={900}
           height={600}
-          className="w-max md:pt-20 max-w-8xl object-cover -mt-20 md:mt-0"
+          className="w-max lg:pt-1 md:pt-10 max-w-8xl object-cover -mt-5 sm:-mt-20 md:-mt-28 lg:-mt-12 xl:mt-0"
           priority
         />
-        <p className="max-w-2xl text-base leading-relaxed text-dark-brown font-lato">
+        <p className="max-w-2xl text-paragraph leading-relaxed text-mid-brown font-lato">
           A confluence of words, ideas, and voices — TIET&apos;s home for poetry,
           debate, theatre, cinema, quizzing, and every form of literary expression.
         </p>
+
+        {/* Scroll cue — inline on mobile, absolute on desktop */}
+        <div className="flex flex-col animate-bounce items-center gap-2 text-dark-brown mt-5 md:hidden">
+          <span className="text-[0.6rem] tracking-widest uppercase font-lato">Scroll</span>
+          <svg className="h-3.5 w-3.5 -mt-2 animate-pulse " fill="none" viewBox="0 0 30 30" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </div>
 
-      {/* Scroll cue */}
-      <div className="absolute bottom-4 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-gray-400">
+      {/* Scroll cue — desktop only, pinned to bottom */}
+      <div className="hidden translate-y-4 md:flex animate-bounce absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-dark-brown">
         <span className="text-xs tracking-widest uppercase font-lato">Scroll</span>
-        <svg className="h-4 w-4 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <svg className="h-5 w-5 -mt-2 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
         </svg>
       </div>

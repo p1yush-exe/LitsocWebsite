@@ -19,7 +19,7 @@ export const subsocs = [
 
 /* ─── Geometry ────────────────────────────────────────────────────────────── */
 
-const ICON_SIZE  = 72;
+const ICON_SIZE  = 100;
 const NUM_ITEMS  = subsocs.length; // 8
 const W          = 700;
 const H          = 380;
@@ -32,13 +32,6 @@ const CENTRE_DEG = 180;
 
 const toRad = (deg: number) => (deg - 90) * (Math.PI / 180);
 
-const HOLES = SLOT_DEGS.map((a) => ({
-  cx: CX + WHEEL_R * Math.cos(toRad(a)),
-  cy: CY + WHEEL_R * Math.sin(toRad(a)),
-  r : a === CENTRE_DEG ? 42 : 36,
-  centre: a === CENTRE_DEG,
-}));
-
 type ShotPhase = "idle" | "flash" | "smoke" | "black";
 
 /* ─── Component ───────────────────────────────────────────────────────────── */
@@ -49,6 +42,18 @@ export default function RouletteSection() {
   /* ── Responsive scale ── */
   const wrapRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+
+  /* ── Scale-compensated sizes: big on desktop, stay usable on mobile ── */
+  const dynIconSize     = Math.max(ICON_SIZE,  Math.round(90 / scale));
+  const dynHoleRCentre  = Math.max(60,         Math.round(55 / scale));
+  const dynHoleRSide    = Math.max(50,         Math.round(44 / scale));
+  const HOLES = SLOT_DEGS.map((a) => ({
+    cx: CX + WHEEL_R * Math.cos(toRad(a)),
+    cy: CY + WHEEL_R * Math.sin(toRad(a)),
+    r : a === CENTRE_DEG ? dynHoleRCentre : dynHoleRSide,
+    centre: a === CENTRE_DEG,
+  }));
+
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -213,10 +218,10 @@ export default function RouletteSection() {
           onClick={stepLeft}
           disabled={busy}
           aria-label="Previous"
-          className="btn-nav-arrow left-2 md:left-6"
+          className="btn-nav-arrow left-2 md:left-6 text-[40px] md:text-[80px]"
+          style={{ background: "transparent", border: "none" }}
         >
-          <span className="hidden md:inline" style={{ fontSize: 22 }}>‹</span>
-          <span className="md:hidden" style={{ fontSize: 32 }}>‹</span>
+          ‹
         </button>
 
         {/* Right arrow */}
@@ -224,10 +229,10 @@ export default function RouletteSection() {
           onClick={stepRight}
           disabled={busy}
           aria-label="Next"
-          className="btn-nav-arrow right-2 md:right-6"
+          className="btn-nav-arrow right-2 md:right-6 text-[40px] md:text-[80px]"
+          style={{ background: "transparent", border: "none"}}
         >
-          <span className="hidden md:inline" style={{ fontSize: 22 }}>›</span>
-          <span className="md:hidden" style={{ fontSize: 32 }}>›</span>
+          ›
         </button>
 
         <div
@@ -251,14 +256,14 @@ export default function RouletteSection() {
             {subsocs.map((s, i) => {
               const angleDeg = ((i * STEP + rotation) % 360 + 360) % 360;
               const rad = toRad(angleDeg);
-              const x = CX + WHEEL_R * Math.cos(rad) - ICON_SIZE / 2;
-              const y = CY + WHEEL_R * Math.sin(rad) - ICON_SIZE / 2;
-              if (y + ICON_SIZE < -4 || y > H + 4) return null;
+              const x = CX + WHEEL_R * Math.cos(rad) - dynIconSize / 2;
+              const y = CY + WHEEL_R * Math.sin(rad) - dynIconSize / 2;
+              if (y + dynIconSize < -4 || y > H + 4) return null;
               const isLoaded = i === centerIdx;
               return (
                 <div
                   key={s.name}
-                  style={{ position: "absolute", left: x, top: y, width: ICON_SIZE, height: ICON_SIZE, zIndex: 10 }}
+                  style={{ position: "absolute", left: x, top: y, width: dynIconSize, height: dynIconSize, zIndex: 10 }}
                 >
                   <div
                     className="relative w-full h-full rounded-full overflow-hidden"
@@ -295,8 +300,8 @@ export default function RouletteSection() {
                   ))}
                 </mask>
                 <radialGradient id="centreHalo" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%"   stopColor="rgba(244,63,94,0.18)" />
-                  <stop offset="100%" stopColor="rgba(244,63,94,0)"    />
+                  <stop offset="0%"   stopColor="rgba(244,40,20,0.18)" />
+                  <stop offset="100%" stopColor="rgba(244,40,20,0)"    />
                 </radialGradient>
                 <radialGradient id="sideHalo" cx="50%" cy="50%" r="50%">
                   <stop offset="0%"   stopColor="rgba(0,0,0,0.04)" />
@@ -307,7 +312,7 @@ export default function RouletteSection() {
               <rect width={W} height={H} fill="#faeade" mask="url(#panelHoles)" />
 
               {HOLES.map((h, i) => {
-                const accent = h.centre ? "#f43f5e" : "rgba(160,150,140,0.70)";
+                const accent = h.centre ? "rgba(244,20,40)" : "rgba(160,150,140,0.70)";
                 const glow   = h.centre ? "url(#centreHalo)" : "url(#sideHalo)";
                 return (
                   <g key={i}>
@@ -326,7 +331,7 @@ export default function RouletteSection() {
                         <line key={a}
                           x1={h.cx + r1 * Math.cos(ar)} y1={h.cy + r1 * Math.sin(ar)}
                           x2={h.cx + r2 * Math.cos(ar)} y2={h.cy + r2 * Math.sin(ar)}
-                          stroke="#f43f5e" strokeWidth={2} opacity={0.75} />
+                          stroke="rgba(244,20,40)" strokeWidth={2} opacity={0.75} />
                       );
                     })}
                   </g>
@@ -371,10 +376,10 @@ export default function RouletteSection() {
         <p className="text-base font-semibold text-dark-brown tracking-wide font-antonio" style={{ letterSpacing: "0.04em" }}>
           {subsocs[centerIdx].name}
         </p>
-        <p className="mt-1 text-sm text-dark-brown max-w-xs mx-auto font-lato">
+        <p className="mt-1 text-sm text-mid-brown max-w-xs mx-auto font-lato">
           {subsocs[centerIdx].desc}
         </p>
-        <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-brown-red font-lato">
+        <p className="mt-3 animate-pulse text-[10px] uppercase tracking-[0.3em] text-brown-red font-lato">
           pull trigger to enter
         </p>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import type { CSSProperties } from "react";
 import EventCard from "./EventCard";
 import type { CalendarEvent } from "@/types/events";
 
@@ -14,13 +15,43 @@ function HandCircle() {
       {/* Primary stroke — irregular closed path */}
       <path
         d="M24 6 C34 4 43 12 43 23 C43 34 35 43 24 43 C13 43 5 35 5 24 C5 13 12 5 24 6"
-        stroke="#e11d48" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
+        stroke="#a02128" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
       />
       {/* Second lighter pass for sketched double-stroke feel */}
       <path
         d="M26 5.5 C37 6 44 15 43 26 C42 37 33 45 22 43.5"
-        stroke="#e11d48" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.40"
+        stroke="#a02128" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.40"
       />
+    </svg>
+  );
+}
+
+function HandArrowLeft() {
+  return (
+    <svg viewBox="0 0 28 28" fill="none" className="h-13 w-13" aria-hidden>
+      {/* Wobbly shaft */}
+      <path d="M22 14.2 C17.5 13.6 12.5 14.8 7 14" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
+      {/* Arrowhead — upper leg, slightly curved */}
+      <path d="M11.5 9 C9.5 11 7.5 12.8 7 14" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
+      {/* Arrowhead — lower leg */}
+      <path d="M7 14 C7.5 15.5 9.5 17.2 11.5 19" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
+      {/* Light secondary pass — pen texture */}
+      <path d="M20 13.5 C16 13.2 11 14.2 8 14" stroke="#523122" strokeWidth="0.8" strokeLinecap="round" opacity="0.3"/>
+    </svg>
+  );
+}
+
+function HandArrowRight() {
+  return (
+    <svg viewBox="0 0 28 28" fill="none" className="h-13 w-13" aria-hidden>
+      {/* Wobbly shaft */}
+      <path d="M6 14 C10.5 14.8 15.5 13.6 21 14.2" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
+      {/* Arrowhead — upper leg */}
+      <path d="M16.5 9 C18.5 11 20.5 12.8 21 14" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
+      {/* Arrowhead — lower leg */}
+      <path d="M21 14 C20.5 15.5 18.5 17.2 16.5 19" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
+      {/* Light secondary pass */}
+      <path d="M8 14.5 C12 14.2 17 13.5 20 14" stroke="#523122" strokeWidth="0.8" strokeLinecap="round" opacity="0.3"/>
     </svg>
   );
 }
@@ -29,11 +60,8 @@ function HandX() {
   return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
       {/* Slightly curved main strokes */}
-      <path d="M11 11 C16 15 24 24 37 37" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
-      <path d="M37 11 C32 15 24 24 11 37" stroke="#94a3b8" strokeWidth="2" strokeLinecap="round" />
-      {/* Short tail strokes — pen-skip texture */}
-      <path d="M13 9.5 C15 12 18 16 21 20" stroke="#94a3b8" strokeWidth="0.9" strokeLinecap="round" opacity="0.45" />
-      <path d="M35 9.5 C33 12 30 16 27 20" stroke="#94a3b8" strokeWidth="0.9" strokeLinecap="round" opacity="0.45" />
+      <path d="M11 11 C16 15 24 24 37 37" stroke="#a02128" strokeWidth="2" strokeLinecap="round" />
+      <path d="M37 11 C32 15 24 24 11 37" stroke="#a02128" strokeWidth="2" strokeLinecap="round" />
     </svg>
   );
 }
@@ -66,7 +94,7 @@ function CalendarSkeleton() {
     <div className="animate-pulse">
       <div className="grid grid-cols-7">
         {Array(42).fill(0).map((_, i) => (
-          <div key={i} style={{ height: 96 }} className="bg-gray-50" />
+          <div key={i} style={{ height: 96 }} />
         ))}
       </div>
     </div>
@@ -118,47 +146,48 @@ export default function EventCalendar() {
           <div className="mb-4 flex items-center justify-between">
             <button
               onClick={prevMonth}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-white hover:shadow-sm"
+              className="flex h-10 w-10 items-center justify-center text-mid-brown transition-transform hover:scale-110 active:scale-95"
               aria-label="Previous month"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
-              </svg>
+              <HandArrowLeft />
             </button>
 
-            <div className="flex items-center gap-3">
-              <h3 className="text-lg font-extrabold text-gray-900" style={{ fontFamily: "Georgia,serif", minWidth: 170, textAlign: "center", letterSpacing: "-0.01em" }}>
+            <div className="flex items-center gap-2">
+              <h3 className="font-antonio text-3xl font-extrabold uppercase tracking-wide text-dark-brown" style={{ minWidth: 200, textAlign: "center" }}>
                 {MONTH_NAMES[viewMonth]} {viewYear}
               </h3>
               {(viewYear !== now.getFullYear() || viewMonth !== now.getMonth()) && (
-                <button onClick={goToday} className="rounded-full bg-indigo-50 px-3 py-0.5 text-xs font-semibold text-indigo-600 hover:bg-indigo-100 transition-colors">
-                  Today
+                <button onClick={goToday} className="rounded-full font-antonio bg-milk-yellow px-3 py-1 text-sm font-semibold text-red-brown hover:bg-light-brown/30 transition-colors">
+                  LOST?
                 </button>
               )}
             </div>
 
             <button
               onClick={nextMonth}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-white hover:shadow-sm"
+              className="flex h-10 w-10 items-center justify-center text-mid-brown transition-transform hover:scale-110 active:scale-95"
               aria-label="Next month"
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
-              </svg>
+              <HandArrowRight />
             </button>
           </div>
 
           {/* ── Calendar grid ── */}
           <div
-            className="rounded-2xl overflow-hidden"
-            style={{ border: "1px solid #e5e7eb", background: "#fff", boxShadow: "0 1px 6px rgba(0,0,0,0.05)" }}
+            className="overflow-visible"
+            style={{
+              border: "2px solid rgba(82,49,34,0.35)",
+              background: "#faeade",
+              boxShadow: "3px 4px 0 rgba(82,49,34,0.10), -1px -1px 0 rgba(82,49,34,0.06)",
+            }}
           >
             {/* Day headers */}
-            <div className="grid grid-cols-7" style={{ borderBottom: "1px solid #e5e7eb" }}>
-              {DAY_NAMES.map((d) => (
+            <div className="grid grid-cols-7" style={{ borderBottom: "2px solid rgba(82,49,34,0.30)", background: "#faeade" }}>
+              {DAY_NAMES.map((d, di) => (
                 <div
                   key={d}
-                  className="py-2.5 text-center text-[11px] font-semibold uppercase tracking-widest text-gray-400"
+                  className="font-lato py-2.5 text-center text-[11px] font-semibold uppercase tracking-widest text-mid-brown"
+                  style={di < 6 ? { borderRight: "1.5px solid rgba(82,49,34,0.18)" } : undefined}
                 >
                   {d}
                 </div>
@@ -173,11 +202,18 @@ export default function EventCalendar() {
             ) : (
               <div className="grid grid-cols-7">
                 {grid.map((day, i) => {
+                  const col = i % 7;
+                  const isLastCol = col === 6;
+                  const cellBorder: CSSProperties = {
+                    borderRight: isLastCol ? undefined : "1.5px solid rgba(82,49,34,0.15)",
+                    borderBottom: "1.5px solid rgba(82,49,34,0.15)",
+                  };
+
                   if (day === null) {
                     return (
                       <div
                         key={`e-${i}`}
-                        style={{ height: 96, background: "#fafafa" }}
+                        style={{ height: 96, background: "#faeade", ...cellBorder }}
                       />
                     );
                   }
@@ -192,9 +228,9 @@ export default function EventCalendar() {
                     : null;
 
                   /* Subtle background tint for event cells */
-                  let cellBg = "#fff";
-                  if (hasUpcoming) cellBg = "#fff1f3";
-                  if (hasPast)     cellBg = "#f8f8f8";
+                  let cellBg = "#faeade";
+                  if (hasUpcoming) cellBg = "#fce8d8";
+                  if (hasPast)     cellBg = "#fce8d8";
 
                   return (
                     <div
@@ -212,6 +248,7 @@ export default function EventCalendar() {
                         background: cellBg,
                         cursor: primaryEvent ? "pointer" : "default",
                         transition: "background 0.12s",
+                        ...cellBorder,
                       }}
                       className={primaryEvent ? "hover:brightness-[0.97]" : ""}
                     >
@@ -220,14 +257,14 @@ export default function EventCalendar() {
                         className="absolute left-0 right-0 text-center leading-none"
                         style={{
                           top: 14,
-                          fontSize: 16,
+                          fontSize: 22,
                           color: isToday
-                            ? "#6366f1"
+                            ? "#a02128"
                             : hasUpcoming
-                            ? "#9f1239"
+                            ? "#a02128"
                             : hasPast
-                            ? "#94a3b8"
-                            : "#374151",
+                            ? "#a26833"
+                            : "#523122",
                           fontWeight: isToday || hasUpcoming ? 800 : 500,
                           zIndex: 2,
                           position: "absolute",
@@ -240,7 +277,7 @@ export default function EventCalendar() {
                       {isToday && (
                         <span
                           className="absolute rounded-full"
-                          style={{ top: 34, left: "50%", transform: "translateX(-50%)", height: 2, width: 14, background: "#6366f1" }}
+                          style={{ top: 40, left: "50%", transform: "translateX(-50%)", height: 2, width: 16, background: "#a02128" }}
                         />
                       )}
 
@@ -248,7 +285,7 @@ export default function EventCalendar() {
                       {hasUpcoming && (
                         <span
                           className="absolute"
-                          style={{ top: 4, left: "50%", width: 44, height: 44, transform: "translateX(-50%)", zIndex: 1 }}
+                          style={{ top: 2, left: "50%", width: 56, height: 56, transform: "translateX(-50%)", zIndex: 1 }}
                         >
                           <HandCircle />
                         </span>
@@ -256,7 +293,7 @@ export default function EventCalendar() {
                       {hasPast && (
                         <span
                           className="absolute"
-                          style={{ top: 4, left: "50%", width: 40, height: 40, transform: "translateX(-50%)", zIndex: 1 }}
+                          style={{ top: 2, left: "50%", width: 56, height: 56, transform: "translateX(-50%)", zIndex: 1 }}
                         >
                           <HandX />
                         </span>
@@ -266,7 +303,7 @@ export default function EventCalendar() {
                       {primaryEvent && (
                         <span
                           className="absolute bottom-1.5 left-1.5 right-1.5 hidden truncate text-[9px] font-medium leading-none sm:block"
-                          style={{ color: hasUpcoming ? "#e11d48" : "#94a3b8" }}
+                          style={{ color: "#a02128" }}
                         >
                           {primaryEvent.title}
                         </span>
@@ -280,17 +317,17 @@ export default function EventCalendar() {
 
           {/* ── Legend ── */}
           <div className="mt-3 flex items-center justify-end gap-5 px-1">
-            <span className="flex items-center gap-1.5 text-[11px] text-gray-400">
+            <span className="flex items-center gap-1.5 text-[11px] text-mid-brown">
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0">
                 <path d="M12 3 C17 2 22 7 22 12 C22 18 17 22 12 22 C7 22 2 17 2 12 C2 7 7 2 12 3Z"
-                  stroke="#e11d48" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+                  stroke="#a02128" strokeWidth="1.6" strokeLinecap="round" fill="none" />
               </svg>
               Upcoming
             </span>
-            <span className="flex items-center gap-1.5 text-[11px] text-gray-400">
+            <span className="flex items-center gap-1.5 text-[11px] text-mid-brown">
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0">
-                <path d="M5 5 C8 9 12 12 19 19" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" />
-                <path d="M19 5 C16 9 12 12 5 19" stroke="#94a3b8" strokeWidth="1.6" strokeLinecap="round" />
+                <path d="M5 5 C8 9 12 12 19 19" stroke="#a02128" strokeWidth="1.6" strokeLinecap="round" />
+                <path d="M19 5 C16 9 12 12 5 19" stroke="#a02128" strokeWidth="1.6" strokeLinecap="round" />
               </svg>
               Past event
             </span>
