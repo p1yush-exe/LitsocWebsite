@@ -9,6 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@splinetool/react-spline": "^4.1.0",
     "cloudinary": "^2.9.0",
     "framer-motion": "^12.34.3",
     "googleapis": "^171.4.0",

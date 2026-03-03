@@ -187,7 +187,7 @@ export default function RouletteSection() {
 
   /* ── Render ── */
   return (
-    <section className="relative w-full overflow-hidden bg-milk pb-10 pt-10">
+    <section className="relative w-full overflow-hidden pb-10 pt-10">
 
       {/* Full-screen shot overlay */}
       <div

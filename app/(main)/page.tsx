@@ -8,12 +8,13 @@ import ScrollToTop from "@/components/ScrollToTop";
 /* ─── Home Page ──────────────────────────────────────────────────────────────── */
 export default function Home() {
   return (
-    <div className="min-h-screen w-full">
+    <div className="relative min-h-screen w-full bg-milk">
       <ScrollToTop />
       <HeroSection />
       <EventsCarousel />
+      transition
       <EventCalendar />
-      <About/>
+      about
       <RouletteSection />
     </div>
   );

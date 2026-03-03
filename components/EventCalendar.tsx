@@ -1,89 +1,121 @@
 "use client";
 
-import { useState, useEffect, useRef, ReactNode } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { CSSProperties } from "react";
 import EventCard from "./EventCard";
 import type { CalendarEvent } from "@/types/events";
-import {motion, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 /* ─── Hand-drawn SVG markers ─────────────────────────────────────────────────
-   Deliberately imperfect paths — irregular wobble to mimic a pen mark on paper.
+   pathLength on motion.path — the ONLY element that supports it.
 ────────────────────────────────────────────────────────────────────────────── */
 
-type props=
-{
-  children:ReactNode;
-  delay?: number;
-};
-
-export function DrawOnView({children, delay=0}:props)
-{
-  const ref= useRef<SVGGElement | null>(null);
-  const isInView= useInView(ref,{once:true,margin:"-10% 0px -10% 0px"});
-
-  return(
-    <motion.g
-      ref={ref}
-      initial={{pathLength:0}}
-      animate={isInView ? {pathLength: 1}:{}}
-      transition={{duration:1.2, ease:"easeOut",delay}}
-      style={{overflow:"visible"}}
-    >
-      {children}
-    </motion.g>
-  )
+function p(isInView: boolean, delay: number) {
+  return {
+    initial: { pathLength: 0, opacity: 0 },
+    animate: { pathLength: isInView ? 1 : 0, opacity: isInView ? 1 : 0 },
+    transition: {
+      duration: 0.6,
+      ease: "easeInOut" as const,
+      delay,
+      opacity: { duration: 0, delay }, // snap visible exactly when drawing starts — no dot before animation
+    },
+  };
 }
 
-function HandCircle() {
+function HandCircle({ delay = 0, isInView = false }: { delay?: number; isInView?: boolean }) {
   return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
-      {/* Primary stroke — irregular closed path */}
-      <DrawOnView delay={0}>
-        <motion.path
-          d="M24 6 C34 4 43 12 43 23 C43 34 35 43 24 43 C13 43 5 35 5 24 C5 13 12 5 24 6"
-          stroke="#a02128" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
-        />
-      </DrawOnView>
+      <motion.path
+        d="M10 4 C30 6 43 10 40 23 C40 34 35 43 24 43 C10 43 5 35 5 24 C5 13 12 5 24 2"
+        stroke="#a02128" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
+        {...p(isInView, delay)}
+      />
+    </svg>
+  );
+}
+
+function HandCircle2({ delay = 0, isInView = false }: { delay?: number; isInView?: boolean }) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
+      <motion.path
+        d="M7 6 C34 4 43 12 43 23 C43 34 35 43 24 43 C10 43 5 35 5 24 C5 13 12 5 24 2"
+        stroke="#a02128" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
+        {...p(isInView, delay)}
+      />
     </svg>
   );
 }
 
 function HandArrowLeft() {
+  const ref = useRef<HTMLSpanElement | null>(null);
+  const iv = useInView(ref, { once: true, amount: 0.1 });
   return (
-    <svg viewBox="0 0 28 28" fill="none" className="h-13 w-13" aria-hidden>
-      {/* Wobbly shaft */}
-      <path d="M22 14.2 C17.5 13.6 12.5 14.8 7 14" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
-      {/* Arrowhead — upper leg, slightly curved */}
-      <path d="M11.5 9 C9.5 11 7.5 12.8 7 14" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
-      {/* Arrowhead — lower leg */}
-      <path d="M7 14 C7.5 15.5 9.5 17.2 11.5 19" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
-      {/* Light secondary pass — pen texture */}
-      <path d="M20 13.5 C16 13.2 11 14.2 8 14" stroke="#523122" strokeWidth="0.8" strokeLinecap="round" opacity="0.3"/>
-    </svg>
+    <span ref={ref}>
+      <svg viewBox="0 0 28 28" fill="none" className="h-13 w-13" aria-hidden>
+        <motion.path d="M22 14.2 C17.5 13.6 12.5 14.8 7 14" stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0)} />
+        <motion.path d="M11.5 9 C9.5 11 7.5 12.8 7 14"        stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.15)} />
+        <motion.path d="M7 14 C7.5 15.5 9.5 17.2 11.5 19"     stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.25)} />
+      </svg>
+    </span>
   );
 }
 
 function HandArrowRight() {
+  const ref = useRef<HTMLSpanElement | null>(null);
+  const iv = useInView(ref, { once: true, amount: 0.1 });
   return (
-    <svg viewBox="0 0 28 28" fill="none" className="h-13 w-13" aria-hidden>
-      {/* Wobbly shaft */}
-      <path d="M6 14 C10.5 14.8 15.5 13.6 21 14.2" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
-      {/* Arrowhead — upper leg */}
-      <path d="M16.5 9 C18.5 11 20.5 12.8 21 14" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
-      {/* Arrowhead — lower leg */}
-      <path d="M21 14 C20.5 15.5 18.5 17.2 16.5 19" stroke="#523122" strokeWidth="2.1" strokeLinecap="round"/>
-      {/* Light secondary pass */}
-      <path d="M8 14.5 C12 14.2 17 13.5 20 14" stroke="#523122" strokeWidth="0.8" strokeLinecap="round" opacity="0.3"/>
+    <span ref={ref}>
+      <svg viewBox="0 0 28 28" fill="none" className="h-13 w-13" aria-hidden>
+        <motion.path d="M6 14 C10.5 14.8 15.5 13.6 21 14.2" stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0)} />
+        <motion.path d="M16.5 9 C18.5 11 20.5 12.8 21 14"    stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.15)} />
+        <motion.path d="M21 14 C20.5 15.5 18.5 17.2 16.5 19" stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.25)} />
+      </svg>
+    </span>
+  );
+}
+
+function HandX({ delay = 0, isInView = false, done = false }: { delay?: number; isInView?: boolean; done?: boolean }) {
+  if (done) return (
+    <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
+      <path d="M9 11 C22 15 24 24 37 34"  stroke="#a02128" strokeWidth="2"   strokeLinecap="round" />
+      <path d="M43 13 C32 15 24 24 11 37" stroke="#a02128" strokeWidth="2"   strokeLinecap="round" />
+    </svg>
+  );
+  return (
+    <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
+      <motion.path d="M9 11 C22 15 24 24 37 34"  stroke="#a02128" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay)} />
+      <motion.path d="M43 13 C32 15 24 24 11 37" stroke="#a02128" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay + 0.2)} />
     </svg>
   );
 }
 
-function HandX() {
+function HandX2({ delay = 0, isInView = false, done = false }: { delay?: number; isInView?: boolean; done?: boolean }) {
+  if (done) return (
+    <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
+      <path d="M8 8 C14 18 28 26 40 38"  stroke="#a02128" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M40 8 C30 20 20 26 8 40"  stroke="#a02128" strokeWidth="2.3" strokeLinecap="round" />
+    </svg>
+  );
   return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
-      {/* Slightly curved main strokes */}
-      <path d="M11 11 C16 15 24 24 37 37" stroke="#a02128" strokeWidth="2" strokeLinecap="round" />
-      <path d="M37 11 C32 15 24 24 11 37" stroke="#a02128" strokeWidth="2" strokeLinecap="round" />
+      <motion.path d="M8 8 C14 18 28 26 40 38"  stroke="#a02128" strokeWidth="2.2" strokeLinecap="round" {...p(isInView, delay)} />
+      <motion.path d="M40 8 C30 20 20 26 8 40"  stroke="#a02128" strokeWidth="2.3" strokeLinecap="round" {...p(isInView, delay + 0.2)} />
+    </svg>
+  );
+}
+
+function HandX3({ delay = 0, isInView = false, done = false }: { delay?: number; isInView?: boolean; done?: boolean }) {
+  if (done) return (
+    <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
+      <path d="M12 9 C18 16 26 26 39 40" stroke="#a02128" strokeWidth="2"   strokeLinecap="round" />
+      <path d="M38 11 C28 17 22 24 9 39"  stroke="#a02128" strokeWidth="2.3" strokeLinecap="round" />
+    </svg>
+  );
+  return (
+    <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
+      <motion.path d="M12 9 C18 16 26 26 39 40" stroke="#a02128" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay)} />
+      <motion.path d="M38 11 C28 17 22 24 9 39"  stroke="#a02128" strokeWidth="2.3" strokeLinecap="round" {...p(isInView, delay + 0.2)} />
     </svg>
   );
 }
@@ -130,6 +162,18 @@ export default function EventCalendar() {
   const [error, setError]                 = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
+  const calendarRef = useRef<HTMLElement | null>(null);
+  const calendarInView = useInView(calendarRef, { once: true, amount: 0.1 });
+  const [xsDone, setXsDone] = useState(false);
+
+  useEffect(() => {
+    if (calendarInView && !xsDone) {
+      // wait for longest possible X animation to finish (max stagger ~0.8s + 0.2s second stroke + 0.6s duration)
+      const t = setTimeout(() => setXsDone(true), 1800);
+      return () => clearTimeout(t);
+    }
+  }, [calendarInView, xsDone]);
+
   const now = new Date();
   const [viewYear, setViewYear]   = useState(now.getFullYear());
   const [viewMonth, setViewMonth] = useState(now.getMonth());
@@ -161,7 +205,7 @@ export default function EventCalendar() {
     <>
       <EventCard event={selectedEvent} onClose={() => setSelectedEvent(null)} />
 
-      <section id="calendar" className="w-full bg-milk py-10 px-4">
+      <section id="calendar" ref={calendarRef} className="w-full py-10 px-4">
         <div className="mx-auto w-full max-w-3xl">
 
           {/* ── Month nav ── */}
@@ -198,17 +242,31 @@ export default function EventCalendar() {
           <div
             className="overflow-visible"
             style={{
-              border: "2px solid rgba(82,49,34,0.35)",
+              position: "relative",
               background: "#faeade",
               boxShadow: "3px 4px 0 rgba(82,49,34,0.10), -1px -1px 0 rgba(82,49,34,0.06)",
             }}
           >
+            {/* Paper texture overlay — blends with cell colors via mix-blend-mode */}
+            <div
+              aria-hidden
+              style={{
+                position: "absolute",
+                inset: 0,
+                backgroundImage: "url('/white-paper-texture.jpg')",
+                backgroundSize: "cover",
+                backgroundRepeat: "no-repeat",
+                mixBlendMode: "multiply",
+                pointerEvents: "none",
+                zIndex: 10,
+              }}
+            />
             {/* Day headers */}
             <div className="grid grid-cols-7" style={{ borderBottom: "2px solid rgba(82,49,34,0.30)", background: "#faeade" }}>
               {DAY_NAMES.map((d, di) => (
                 <div
                   key={d}
-                  className="font-lato py-2.5 text-center text-[11px] font-semibold uppercase tracking-widest text-mid-brown"
+                  className="font-lato py-2.5 text-center text-sm md:text-lg lg:text-xl font-semibold uppercase tracking-widest text-mid-brown"
                   style={di < 6 ? { borderRight: "1.5px solid rgba(82,49,34,0.18)" } : undefined}
                 >
                   {d}
@@ -226,6 +284,7 @@ export default function EventCalendar() {
                 {grid.map((day, i) => {
                   const col = i % 7;
                   const isLastCol = col === 6;
+                  const stagger = col * 0.06 + Math.floor(i / 7) * 0.04;
                   const cellBorder: CSSProperties = {
                     borderRight: isLastCol ? undefined : "1.5px solid rgba(82,49,34,0.15)",
                     borderBottom: "1.5px solid rgba(82,49,34,0.15)",
@@ -307,24 +366,30 @@ export default function EventCalendar() {
                       {hasUpcoming && (
                         <span
                           className="absolute"
-                          style={{ top: 2, left: "50%", width: 56, height: 56, transform: "translateX(-50%)", zIndex: 1 }}
+                          style={{ top: 0, left: "50%", width: 68, height: 68, transform: "translateX(-45%)", zIndex: 1 }}
                         >
-                          <HandCircle />
+                          {day % 2 === 0
+                            ? <HandCircle delay={stagger} isInView={calendarInView} />
+                            : <HandCircle2 delay={stagger} isInView={calendarInView} />}
                         </span>
                       )}
                       {hasPast && (
                         <span
                           className="absolute"
-                          style={{ top: 2, left: "50%", width: 56, height: 56, transform: "translateX(-50%)", zIndex: 1 }}
+                          style={{ top: -6, left: "50%", width: 68, height: 68, transform: "translateX(-58%)", zIndex: 1 }}
                         >
-                          <HandX />
+                          {day % 3 === 0
+                            ? <HandX  delay={stagger} isInView={calendarInView} done={xsDone} />
+                            : day % 3 === 1
+                            ? <HandX2 delay={stagger} isInView={calendarInView} done={xsDone} />
+                            : <HandX3 delay={stagger} isInView={calendarInView} done={xsDone} />}
                         </span>
                       )}
 
-                      {/* Tiny event title hint at bottom of cell */}
+                      {/* Event title hint at bottom of cell */}
                       {primaryEvent && (
                         <span
-                          className="absolute bottom-1.5 left-1.5 right-1.5 hidden truncate text-[9px] font-medium leading-none sm:block"
+                          className="absolute bottom-1.5 left-1 right-1 block truncate text-[10px] sm:text-[11px] font-semibold leading-none"
                           style={{ color: "#a02128" }}
                         >
                           {primaryEvent.title}

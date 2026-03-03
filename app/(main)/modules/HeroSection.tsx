@@ -17,14 +17,19 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 80);
+    const onScroll = () => {
+      if (window.scrollY > 80) {
+        setScrolled(true);
+        window.removeEventListener("scroll", onScroll);
+      }
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <section
-      className="pt-30 relative flex md:min-h-screen w-full flex-col items-center justify-start md:justify-center overflow-hidden bg-milk pb-3 md:pb-0"
+      className="pt-30 relative flex md:min-h-screen w-full flex-col items-center justify-start md:justify-center overflow-hidden pb-3 md:pb-0"
     >
       {/* LITSOC ghost title */}
       <div

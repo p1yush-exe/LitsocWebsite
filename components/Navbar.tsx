@@ -137,7 +137,7 @@ export default function Navbar() {
             href={ctaConfig.href}
             target={ctaConfig.external ? "_blank" : undefined}
             rel={ctaConfig.external ? "noopener noreferrer" : undefined}
-            className="relative rounded-full border border-dark-brown px-5 py-3 text-lg font-black uppercase tracking-[-0.02em] font-antonio text-dark-brown transition-colors duration-200 hover:bg-dark-brown hover:text-milk overflow-hidden flex items-center justify-center"
+            className="relative rounded-full border border-dark-brown px-1 py-2 text-2xl font-black uppercase tracking-[-0.02em] font-antonio text-dark-brown transition-colors duration-200 hover:bg-dark-brown hover:text-milk overflow-hidden flex items-center justify-center"
             style={{ minWidth: "9.5rem" }}
           >
             {/* pulse flash on label change */}
@@ -151,7 +151,7 @@ export default function Navbar() {
               />
             </AnimatePresence>
             {/* invisible anchor keeps width locked to longest label */}
-            <span className="invisible select-none pointer-events-none absolute text-lg">GET INVOLVED</span>
+            <span className="invisible select-none pointer-events-none absolute">GET INVOLVED</span>
             <AnimatePresence mode="wait" initial={false}>
               <motion.span
                 key={ctaConfig.label}

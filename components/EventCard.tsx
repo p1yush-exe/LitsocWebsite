@@ -98,6 +98,8 @@ export default function EventCard({ event, onClose }: EventCardProps) {
                   <Link
                     href={event.galleryHref}
                     onClick={onClose}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium text-milk-yellow bg-dark-brown -translate-x-1 transition-all hover:scale-105 hover:font-bold"
                   >
                     <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
