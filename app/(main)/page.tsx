@@ -12,9 +12,7 @@ export default function Home() {
       <ScrollToTop />
       <HeroSection />
       <EventsCarousel />
-      transition
       <EventCalendar />
-      about
       <RouletteSection />
     </div>
   );
