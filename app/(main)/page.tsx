@@ -2,6 +2,7 @@ import HeroSection from "./modules/HeroSection";
 import EventsCarousel from "./modules/EventsCarousel";
 import EventCalendar from "@/components/EventCalendar";
 import RouletteSection from "./modules/RouletteSection";
+import About from "@/components/About";
 import ScrollToTop from "@/components/ScrollToTop";
 
 /* ─── Home Page ──────────────────────────────────────────────────────────────── */
@@ -12,6 +13,7 @@ export default function Home() {
       <HeroSection />
       <EventsCarousel />
       <EventCalendar />
+      <About/>
       <RouletteSection />
     </div>
   );

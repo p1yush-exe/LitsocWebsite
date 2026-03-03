@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export default function HeroSection() {
   // Delays the LITSOC pop animation until the page loader has exited.
   const [animReady, setAnimReady] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     // "app:loaded" is dispatched by PageLoader just as it starts to fade out.
@@ -13,6 +14,12 @@ export default function HeroSection() {
     const onLoaded = () => setTimeout(() => setAnimReady(true), 120);
     window.addEventListener("app:loaded", onLoaded, { once: true });
     return () => window.removeEventListener("app:loaded", onLoaded);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
@@ -29,9 +36,11 @@ export default function HeroSection() {
           style={{
             letterSpacing: "-0.02em",
             fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
-            background: "linear-gradient(to bottom, var(--ghost-text-start) 40%, var(--ghost-text-end) 80%)",
+            background: "linear-gradient(to bottom, var(--ghost-text-start) 40%, var(--ghost-text-end) 100%)",
             WebkitBackgroundClip: "text",
             backgroundClip: "text",
+            WebkitMaskImage: "linear-gradient(to bottom, black 30%, transparent 86%)",
+            maskImage: "linear-gradient(to bottom, black 30%, transparent 86%)",
             color: "transparent",
             userSelect: "none",
             whiteSpace: "nowrap",
@@ -57,7 +66,7 @@ export default function HeroSection() {
         </p>
 
         {/* Scroll cue — inline on mobile, absolute on desktop */}
-        <div className="flex flex-col animate-bounce items-center gap-2 text-dark-brown mt-5 md:hidden">
+        <div className={`flex flex-col animate-bounce items-center gap-2 text-dark-brown mt-5 md:hidden transition-opacity duration-500 ${scrolled ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
           <span className="text-[0.6rem] tracking-widest uppercase font-lato">Scroll</span>
           <svg className="h-3.5 w-3.5 -mt-2 animate-pulse " fill="none" viewBox="0 0 30 30" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
@@ -66,7 +75,7 @@ export default function HeroSection() {
       </div>
 
       {/* Scroll cue — desktop only, pinned to bottom */}
-      <div className="hidden translate-y-4 md:flex animate-bounce absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-dark-brown">
+      <div className={`hidden translate-y-4 md:flex animate-bounce absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-dark-brown transition-opacity duration-500 ${scrolled ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
         <span className="text-xs tracking-widest uppercase font-lato">Scroll</span>
         <svg className="h-5 w-5 -mt-2 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />

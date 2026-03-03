@@ -1,27 +1,49 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, ReactNode } from "react";
 import type { CSSProperties } from "react";
 import EventCard from "./EventCard";
 import type { CalendarEvent } from "@/types/events";
+import {motion, useInView } from "framer-motion";
 
 /* ─── Hand-drawn SVG markers ─────────────────────────────────────────────────
    Deliberately imperfect paths — irregular wobble to mimic a pen mark on paper.
 ────────────────────────────────────────────────────────────────────────────── */
 
+type props=
+{
+  children:ReactNode;
+  delay?: number;
+};
+
+export function DrawOnView({children, delay=0}:props)
+{
+  const ref= useRef<SVGGElement | null>(null);
+  const isInView= useInView(ref,{once:true,margin:"-10% 0px -10% 0px"});
+
+  return(
+    <motion.g
+      ref={ref}
+      initial={{pathLength:0}}
+      animate={isInView ? {pathLength: 1}:{}}
+      transition={{duration:1.2, ease:"easeOut",delay}}
+      style={{overflow:"visible"}}
+    >
+      {children}
+    </motion.g>
+  )
+}
+
 function HandCircle() {
   return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
       {/* Primary stroke — irregular closed path */}
-      <path
-        d="M24 6 C34 4 43 12 43 23 C43 34 35 43 24 43 C13 43 5 35 5 24 C5 13 12 5 24 6"
-        stroke="#a02128" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
-      />
-      {/* Second lighter pass for sketched double-stroke feel */}
-      <path
-        d="M26 5.5 C37 6 44 15 43 26 C42 37 33 45 22 43.5"
-        stroke="#a02128" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" fill="none" opacity="0.40"
-      />
+      <DrawOnView delay={0}>
+        <motion.path
+          d="M24 6 C34 4 43 12 43 23 C43 34 35 43 24 43 C13 43 5 35 5 24 C5 13 12 5 24 6"
+          stroke="#a02128" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
+        />
+      </DrawOnView>
     </svg>
   );
 }
@@ -139,7 +161,7 @@ export default function EventCalendar() {
     <>
       <EventCard event={selectedEvent} onClose={() => setSelectedEvent(null)} />
 
-      <section className="w-full bg-milk py-10 px-4">
+      <section id="calendar" className="w-full bg-milk py-10 px-4">
         <div className="mx-auto w-full max-w-3xl">
 
           {/* ── Month nav ── */}

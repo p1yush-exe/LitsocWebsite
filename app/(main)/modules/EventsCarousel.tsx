@@ -22,10 +22,10 @@ type MobileAnim = { prev: number; dir: 1 | -1; phase: "init" | "run" } | null;
 
 const VIDEOS: CarouselVideo[] = [
   { id: "1", youtubeId: "gxEPV4kolz0", title: "LitSoc Showcase 2024", description: "Annual Event" },
-  { id: "2", youtubeId: "gxEPV4kolz0", title: "Poetry Slam Night",     description: "PoetSoc"      },
-  { id: "3", youtubeId: "gxEPV4kolz0", title: "DebSoc Grand Finale",  description: "Debate"        },
-  { id: "4", youtubeId: "gxEPV4kolz0", title: "Theatre Performance",  description: "Theatre Soc"  },
-  { id: "5", youtubeId: "gxEPV4kolz0", title: "Quiz Championship",    description: "TQC"           },
+  { id: "2", youtubeId: "w_3hALBro5c", title: "Poetry Slam Night",     description: "PoetSoc"      },
+  { id: "3", youtubeId: "Z5NoQg8LdDk", title: "DebSoc Grand Finale",  description: "Debate"        },
+  { id: "4", youtubeId: "CSvFpBOe8eY", title: "Theatre Performance",  description: "Theatre Soc"  },
+  { id: "5", youtubeId: "JQbjS0_ZfJ0", title: "Quiz Championship",    description: "TQC"           },
 ];
 
 /* ─── Component ───────────────────────────────────────────────────────────── */
@@ -48,14 +48,20 @@ export default function EventsCarousel() {
   const [eventsPopped, setEventsPopped] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
+  /* per-video iframe unlock (+auto-advance gate) */
+  const [unlockedVideos, setUnlockedVideos] = useState<Set<number>>(new Set());
+  const [userInteracted, setUserInteracted] = useState(false);
+
   /* stable refs so interval/rAF never sees stale values */
-  const animatingRef = useRef(animating);
-  const currentRef   = useRef(current);
-  const videosRef    = useRef(videos);
+  const animatingRef      = useRef(animating);
+  const currentRef        = useRef(current);
+  const videosRef         = useRef(videos);
+  const userInteractedRef = useRef(userInteracted);
   useLayoutEffect(() => {
-    animatingRef.current = animating;
-    currentRef.current   = current;
-    videosRef.current    = videos;
+    animatingRef.current      = animating;
+    currentRef.current        = current;
+    videosRef.current         = videos;
+    userInteractedRef.current = userInteracted;
   });
 
   /* ── Mobile swipe helper (shared by auto-advance + touch + handleNav) ── */
@@ -91,12 +97,20 @@ export default function EventsCarousel() {
     return () => observer.disconnect();
   }, []);
 
-  /* ── Mobile auto-advance: one video every 3 s ── */
+  /* ── Mobile auto-advance: stops once user taps a thumbnail ── */
   useEffect(() => {
-    if (!isMobile) return;
-    const timer = setInterval(() => triggerMobileSlide(1), 3000);
+    if (!isMobile || userInteracted) return;
+    const timer = setInterval(() => {
+      if (!userInteractedRef.current) triggerMobileSlide(1);
+    }, 3000);
     return () => clearInterval(timer);
-  }, [isMobile]);
+  }, [isMobile, userInteracted]);
+
+  /* Unlock a video index → show its iframe; also stops auto-advance */
+  const handleThumbnailClick = (idx: number) => {
+    setUnlockedVideos(prev => { const s = new Set(prev); s.add(idx); return s; });
+    setUserInteracted(true);
+  };
 
   const touchStart = useRef(0);
   const onTouchStart = (e: React.TouchEvent) => { touchStart.current = e.changedTouches[0].screenX; };
@@ -139,8 +153,8 @@ export default function EventsCarousel() {
 
   /* Scales the desktop carousel linearly from 1.0 at 1440 px down to ~0.53 at 768 px */
   const desktopScale = isMobile ? 1 : Math.min(1, viewportW / 1440);
-  const cardW = isMobile ? 300 : Math.round(560 * desktopScale);
-  const cardH = isMobile ? 169 : Math.round(315 * desktopScale);
+  const cardW = isMobile ? 360 : Math.round(560 * desktopScale);
+  const cardH = isMobile ? 203 : Math.round(315 * desktopScale);
   const off1  = Math.round(310 * desktopScale);
   const off2  = Math.round(580 * desktopScale);
 
@@ -162,12 +176,13 @@ export default function EventsCarousel() {
   };
   const styleMap = isMobile ? pos2styleMobile : pos2style;
 
-  const trackH = isMobile ? 260 : Math.round(375 * desktopScale);
+  const trackH = isMobile ? 310 : Math.round(375 * desktopScale);
 
   return (
     <section
+      id="events-carousel"
       ref={sectionRef}
-      className="relative w-full overflow-hidden bg-milk pb-0 md:pb-28"
+      className="relative w-full overflow-x-hidden bg-milk pb-4 md:pb-28"
       style={{ minHeight: isMobile ? trackH + 20 : trackH + 300 }}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
@@ -257,6 +272,7 @@ export default function EventsCarousel() {
               {(() => {
                 const vid = videos[current];
                 const thumb = `https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`;
+                const isUnlocked = unlockedVideos.has(current);
                 const enterX = mobileAnim
                   ? mobileAnim.phase === "run"
                     ? "0%"
@@ -268,9 +284,47 @@ export default function EventsCarousel() {
                     transform: `translateX(${enterX})`,
                     transition: mobileAnim?.phase === "run" ? "transform 0.45s ease" : "none",
                   }}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={thumb} alt={vid.title}
-                      style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                    {mobileAnim === null && isUnlocked ? (
+                      <iframe
+                        src={`https://www.youtube.com/embed/${vid.youtubeId}?autoplay=1&rel=0&playsinline=1`}
+                        title={vid.title}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        style={{ width: "100%", height: "100%", border: "none", display: "block" }}
+                      />
+                    ) : (
+                      /* thumbnail + play button overlay */
+                      <div
+                        style={{ position: "relative", width: "100%", height: "100%", cursor: mobileAnim === null ? "pointer" : "default" }}
+                        onClick={() => { if (mobileAnim === null) handleThumbnailClick(current); }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={thumb} alt={vid.title}
+                          style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                        {mobileAnim === null && (
+                          <div style={{
+                            position: "absolute", inset: 0,
+                            display: "flex", alignItems: "center", justifyContent: "center",
+                          }}>
+                            <div style={{
+                              width: 56, height: 56, borderRadius: "50%",
+                              background: "rgba(0,0,0,0.65)",
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              backdropFilter: "blur(4px)",
+                            }}>
+                              {/* play triangle */}
+                              <div style={{
+                                width: 0, height: 0,
+                                borderTop: "11px solid transparent",
+                                borderBottom: "11px solid transparent",
+                                borderLeft: "18px solid white",
+                                marginLeft: 4,
+                              }} />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 );
               })()}
@@ -342,25 +396,28 @@ export default function EventsCarousel() {
           {videos[current]?.title ?? ""}
           <span className="absolute top-1/2 left-full ml-6 hidden h-px w-28 -translate-y-1/2 bg-mid-brown/40 md:block" />
         </h2>
-        <p className="mt-3 text-md font-medium uppercase tracking-widest text-mid-brown/70 font-lato">
+        <p className="mt-3 text-sm uppercase text-mid-brown/70 font-lato">
           {videos[current]?.description ?? ""}
         </p>
       </div>
 
       {/* ── Dots ── */}
-      <div className="relative mt-2 md:mt-8 flex justify-center gap-2.5" style={{ zIndex: 1 }}>
+      <div className="relative mt-2 md:mt-8 flex justify-center gap-2" style={{ zIndex: 1 }}>
         {videos.map((_v, i) => (
           <button
             key={i}
             onClick={() => goTo(i)}
             style={{
-              width: 12, height: 12,
+              width: isMobile ? 7 : 12,
+              height: isMobile ? 7 : 12,
               borderRadius: "50%",
               border: "none",
               cursor: "pointer",
+              padding: 0,
               transition: "all 0.3s ease",
               background: i === current ? "#a26833" : "rgba(162,104,51,0.2)",
               transform: i === current ? "scale(1.2)" : "scale(1)",
+              flexShrink: 0,
             }}
             aria-label={`Go to video ${i + 1}`}
           />

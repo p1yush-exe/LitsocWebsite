@@ -6,15 +6,17 @@ import { useRouter } from "next/navigation";
 
 /* ─── Sub-society data (exported for use in Footer) ─────────────────────── */
 
+export const insta= "https://www.instagram.com/";
+
 export const subsocs = [
-  { name: "PoetSoc",               icon: "/poetsoc.png",   href: "/poetsoc",    desc: "Where verses breathe and metaphors bloom." },
-  { name: "Anubhooti",             icon: "/anubhooti.png", href: "/anubhooti",  desc: "Celebrating Hindi literature, poetry & culture." },
-  { name: "DebSoc",                icon: "/debsoc.png",    href: "/debsoc",     desc: "Sharpening minds through argument and oration." },
-  { name: "Punjabi Soc",           icon: "/punjabi.png",   href: "/punjabisoc", desc: "Honouring the vibrant spirit of Punjabi arts." },
-  { name: "Muse",                  icon: "/muse.png",      href: "/muse",       desc: "A creative writing collective for prose & fiction." },
-  { name: "Thapar Quizzing Club",  icon: "/tqc.png",       href: "/tqc",        desc: "For curious minds who live to quiz." },
-  { name: "Cineastes",             icon: "/cineasts.jpg",  href: "/cineastes",  desc: "Exploring cinema as art, language & culture." },
-  { name: "Theatre Soc",           icon: "/theatre.png",   href: "/theatre",    desc: "Telling human stories through the power of stage." },
+  { name: "PoetSoc",               icon: "/poetsoc.png",   href: `${insta}poetsoc.thapar`,    desc: "Where verses breathe and metaphors bloom." },
+  { name: "Anubhooti",             icon: "/anubhooti.png", href: `${insta}anubhooti.litsoc`,  desc: "Celebrating Hindi literature, poetry & culture." },
+  { name: "DebSoc",                icon: "/debsoc.png",    href: `${insta}debsoc_tiet`,     desc: "Sharpening minds through argument and oration." },
+  { name: "Punjabi Soc",           icon: "/punjabi.png",   href: `${insta}punjabi_litsoc`, desc: "Honouring the vibrant spirit of Punjabi arts." },
+  { name: "Muse",                  icon: "/muse.png",      href: `${insta}muse.litsoc.thapar`,       desc: "A creative writing collective for prose & fiction." },
+  { name: "Thapar Quizzing Club",  icon: "/tqc.png",       href: `${insta}thaparquizzingclub`,        desc: "For curious minds who live to quiz." },
+  { name: "Cineastes",             icon: "/cineasts.jpg",  href: `${insta}_cineastes_`,  desc: "Exploring cinema as art, language & culture." },
+  { name: "Theatre Soc",           icon: "/theatre.png",   href: `${insta}thapar.theatre.club`,    desc: "Telling human stories through the power of stage." },
 ];
 
 /* ─── Geometry ────────────────────────────────────────────────────────────── */
@@ -152,7 +154,7 @@ export default function RouletteSection() {
       setShotPhase("flash");
       setTimeout(() => setShotPhase("smoke"),  110);
       setTimeout(() => setShotPhase("black"),  420);
-      setTimeout(() => router.push(navTarget.current), 980);
+      setTimeout(() => { window.open(navTarget.current, "_blank"); setShotPhase("idle"); setBusy(false); }, 980);
     });
   };
 
