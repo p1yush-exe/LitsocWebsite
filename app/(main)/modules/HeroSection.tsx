@@ -37,17 +37,10 @@ export default function HeroSection() {
         style={{ top: "20%", zIndex: 0 }}
       >
         <h1
-          className={`${animReady ? "litsoc-pop" : "opacity-0"} text-center font-black uppercase leading-none text-[clamp(6rem,35vw,30rem)] md:text-[clamp(6rem,29vw,30rem)]`}
+          className={`ghost-title ${animReady ? "litsoc-pop" : "opacity-0"} text-center font-black uppercase leading-none text-[clamp(6rem,35vw,30rem)] md:text-[clamp(6rem,29vw,30rem)]`}
           style={{
-            letterSpacing: "-0.02em",
-            fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
-            background: "linear-gradient(to bottom, var(--ghost-text-start) 40%, var(--ghost-text-end) 100%)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
             WebkitMaskImage: "linear-gradient(to bottom, black 30%, transparent 86%)",
             maskImage: "linear-gradient(to bottom, black 30%, transparent 86%)",
-            color: "transparent",
-            userSelect: "none",
             whiteSpace: "nowrap",
           }}
         >

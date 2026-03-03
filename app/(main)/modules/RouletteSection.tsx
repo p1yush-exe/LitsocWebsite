@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
-import { useRouter } from "next/navigation";
 
 /* ─── Sub-society data (exported for use in Footer) ─────────────────────── */
 
@@ -39,7 +38,6 @@ type ShotPhase = "idle" | "flash" | "smoke" | "black";
 /* ─── Component ───────────────────────────────────────────────────────────── */
 
 export default function RouletteSection() {
-  const router = useRouter();
 
   /* ── Responsive scale ── */
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -174,20 +172,62 @@ export default function RouletteSection() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /* ── Intro spin when section scrolls into view ── */
+  const sectionRef = useRef<HTMLElement>(null);
+  const hasPlayedOnce = useRef(false);
+  const introSpinning = useRef(false);
+  const busyRef = useRef(busy);
+  useLayoutEffect(() => { busyRef.current = busy; });
+
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !busyRef.current && !introSpinning.current) {
+          introSpinning.current = true;
+          const delay = hasPlayedOnce.current ? 0 : 500;
+          hasPlayedOnce.current = true;
+          setTimeout(() => {
+            if (animRef.current) cancelAnimationFrame(animRef.current);
+            const from = rotRef.current;
+            const to = from + 540; // 1.5 full spins
+            setBusy(true);
+            animateTo(from, to, 1200, () => {
+              const finalRot = to % 360;
+              setRotation(finalRot);
+              const idx = nearestTo(finalRot, CENTRE_DEG);
+              snapToCenter(idx, finalRot);
+              introSpinning.current = false;
+            });
+          }, delay);
+        }
+        // Reset when scrolled away so it plays again next time
+        if (!entry.isIntersecting) {
+          introSpinning.current = false;
+        }
+      },
+      { threshold: 0.35 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   /* ── Cleanup ── */
   useEffect(() => () => { if (animRef.current) cancelAnimationFrame(animRef.current); }, []);
 
   /* ── Shot overlay styles ── */
   const shotStyle: Record<ShotPhase, React.CSSProperties> = {
-    idle:  { opacity: 0, background: "transparent",           transition: "none" },
-    flash: { opacity: 1, background: "rgba(255,235,80,0.96)", transition: "none" },
-    smoke: { opacity: 1, background: "rgba(15,6,2,0.85)",     transition: "background 0.32s ease, opacity 0.32s ease" },
-    black: { opacity: 1, background: "#000",                  transition: "background 0.60s ease" },
+    idle:  { opacity: 0, background: "transparent",              transition: "none" },
+    flash: { opacity: 1, background: "var(--flash-yellow)",      transition: "none" },
+    smoke: { opacity: 1, background: "var(--smoke-dark)",        transition: "background 0.32s ease, opacity 0.32s ease" },
+    black: { opacity: 1, background: "var(--color-black)",       transition: "background 0.60s ease" },
   };
 
   /* ── Render ── */
   return (
-    <section className="relative w-full overflow-hidden pb-10 pt-10">
+    <section ref={sectionRef} className="relative w-full overflow-hidden pb-10 pt-10">
 
       {/* Full-screen shot overlay */}
       <div
@@ -270,11 +310,11 @@ export default function RouletteSection() {
                   <div
                     className="relative w-full h-full rounded-full overflow-hidden"
                     style={{
-                      border: `2px solid ${isLoaded ? "rgba(244,63,94,0.80)" : "rgba(180,170,160,0.55)"}`,
-                      background: "#fff",
+                      border: `2px solid ${isLoaded ? "var(--rose-80)" : "var(--stone-55)"}`,
+                      background: "var(--color-white)",
                       boxShadow: isLoaded
-                        ? "0 0 16px rgba(244,63,94,0.35), 0 2px 8px rgba(0,0,0,0.10)"
-                        : "0 2px 6px rgba(0,0,0,0.08)",
+                        ? "0 0 16px var(--rose-35), 0 2px 8px var(--shadow-10)"
+                        : "0 2px 6px var(--shadow-08)",
                       transition: "border-color 0.2s, box-shadow 0.2s",
                     }}
                   >
@@ -302,30 +342,30 @@ export default function RouletteSection() {
                   ))}
                 </mask>
                 <radialGradient id="centreHalo" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%"   stopColor="rgba(244,40,20,0.18)" />
-                  <stop offset="100%" stopColor="rgba(244,40,20,0)"    />
+                  <stop offset="0%"   stopColor="var(--roulette-glow)" />
+                  <stop offset="100%" stopColor="var(--roulette-glow-end)" />
                 </radialGradient>
                 <radialGradient id="sideHalo" cx="50%" cy="50%" r="50%">
-                  <stop offset="0%"   stopColor="rgba(0,0,0,0.04)" />
-                  <stop offset="100%" stopColor="rgba(0,0,0,0)"    />
+                  <stop offset="0%"   stopColor="var(--shadow-04)" />
+                  <stop offset="100%" stopColor="transparent"    />
                 </radialGradient>
               </defs>
 
-              <rect width={W} height={H} fill="#faeade" mask="url(#panelHoles)" />
+              <rect width={W} height={H} fill="var(--color-milk)" mask="url(#panelHoles)" />
 
               {HOLES.map((h, i) => {
-                const accent = h.centre ? "rgba(244,20,40)" : "rgba(160,150,140,0.70)";
+                const accent = h.centre ? "var(--roulette-accent)" : "var(--stone-70)";
                 const glow   = h.centre ? "url(#centreHalo)" : "url(#sideHalo)";
                 return (
                   <g key={i}>
                     <circle cx={h.cx} cy={h.cy} r={h.r + 22} fill={glow} />
                     <circle cx={h.cx} cy={h.cy} r={h.r + 9} fill="none"
-                      stroke={h.centre ? "rgba(244,63,94,0.10)" : "rgba(0,0,0,0.04)"} strokeWidth={8} />
+                      stroke={h.centre ? "var(--rose-10)" : "var(--shadow-04)"} strokeWidth={8} />
                     <circle cx={h.cx} cy={h.cy} r={h.r + 2} fill="none" stroke={accent}
                       strokeWidth={h.centre ? 2.2 : 1.4}
-                      style={h.centre ? { filter: "drop-shadow(0 0 6px rgba(244,63,94,0.55))" } : undefined} />
+                      style={h.centre ? { filter: "drop-shadow(0 0 6px var(--rose-55))" } : undefined} />
                     <circle cx={h.cx} cy={h.cy} r={h.r - 2} fill="none"
-                      stroke={h.centre ? "rgba(244,63,94,0.20)" : "rgba(0,0,0,0.06)"} strokeWidth={1} />
+                      stroke={h.centre ? "var(--rose-20)" : "var(--shadow-06)"} strokeWidth={1} />
                     {h.centre && [0, 90, 180, 270].map((a) => {
                       const ar = a * (Math.PI / 180);
                       const r1 = h.r + 5, r2 = h.r + 15;
@@ -333,7 +373,7 @@ export default function RouletteSection() {
                         <line key={a}
                           x1={h.cx + r1 * Math.cos(ar)} y1={h.cy + r1 * Math.sin(ar)}
                           x2={h.cx + r2 * Math.cos(ar)} y2={h.cy + r2 * Math.sin(ar)}
-                          stroke="rgba(244,20,40)" strokeWidth={2} opacity={0.75} />
+                          stroke="var(--roulette-accent)" strokeWidth={2} opacity={0.75} />
                       );
                     })}
                   </g>

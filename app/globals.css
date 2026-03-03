@@ -11,6 +11,59 @@
   /* Ghost heading text gradient */
   --ghost-text-start: rgb(102, 60, 41);
   --ghost-text-end:   rgba(227, 164, 88, 0);
+
+  /* ── Dark-brown alpha variants ── */
+  --dark-brown-0:  rgba(82,49,34,0);
+  --dark-brown-06: rgba(82,49,34,0.06);
+  --dark-brown-10: rgba(82,49,34,0.10);
+  --dark-brown-15: rgba(82,49,34,0.15);
+  --dark-brown-18: rgba(82,49,34,0.18);
+  --dark-brown-30: rgba(82,49,34,0.30);
+  --dark-brown-35: rgba(82,49,34,0.35);
+  --dark-brown-94: rgba(82,49,34,0.94);
+
+  /* ── Darker-brown alpha variant ── */
+  --darker-brown-85: rgba(36,22,15,0.85);
+
+  /* ── Mid-brown alpha variant ── */
+  --mid-brown-20: rgba(162,104,51,0.2);
+
+  /* ── Milk alpha variants ── */
+  --milk-15: rgba(250,234,222,0.15);
+  --milk-18: rgba(250,234,222,0.18);
+  --milk-30: rgba(250,234,222,0.30);
+  --milk-35: rgba(250,234,222,0.35);
+  --milk-60: rgba(250,234,222,0.60);
+
+  /* ── Overlay / shadow blacks ── */
+  --overlay-55: rgba(0,0,0,0.55);
+  --overlay-60: rgba(0,0,0,0.60);
+  --overlay-65: rgba(0,0,0,0.65);
+  --shadow-04:  rgba(0,0,0,0.04);
+  --shadow-06:  rgba(0,0,0,0.06);
+  --shadow-08:  rgba(0,0,0,0.08);
+  --shadow-10:  rgba(0,0,0,0.10);
+  --shadow-40:  rgba(0,0,0,0.40);
+  --shadow-70:  rgba(0,0,0,0.70);
+
+  /* ── Roulette / accent alpha variants ── */
+  --rose-10: rgba(244,63,94,0.10);
+  --rose-20: rgba(244,63,94,0.20);
+  --rose-35: rgba(244,63,94,0.35);
+  --rose-55: rgba(244,63,94,0.55);
+  --rose-80: rgba(244,63,94,0.80);
+  --stone-55: rgba(180,170,160,0.55);
+  --stone-70: rgba(160,150,140,0.70);
+  --roulette-accent: rgb(244,20,40);
+  --roulette-glow: rgba(244,40,20,0.18);
+  --roulette-glow-end: rgba(244,40,20,0);
+
+  /* ── Shot overlay phases ── */
+  --flash-yellow: rgba(255,235,80,0.96);
+  --smoke-dark:   rgba(15,6,2,0.85);
+
+  /* ── Misc alpha ── */
+  --white-88: rgba(255,255,255,0.88);
 }
 
 /* ── Theme tokens (colors + fonts) ────────────────────────── */
@@ -33,6 +86,11 @@
   --color-red:          #a02128;
   --color-litsoc-black: #222123;
   --color-main-bg:      #232224;
+  --color-event-highlight: #fce8d8;
+  --color-warm-brown:   #735233;
+  --color-lime:         #C2F84F;
+  --color-black:        #000000;
+  --color-white:        #ffffff;
 
   --font-sans:          var(--font-antonio), "Antonio", sans-serif;
   --font-paragraph:     var(--font-proxima-nova), sans-serif;
@@ -40,8 +98,8 @@
 
 /* ── Utilities ─────────────────────────────────────────────── */
 @utility nav-bg {
-  background: #faeade;
-  box-shadow: 0 1px 0 rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06);
+  background: var(--color-milk);
+  box-shadow: 0 1px 0 var(--shadow-08), 0 2px 8px var(--shadow-06);
 }
 
 @utility font-lato {
@@ -61,9 +119,9 @@
 }
 
 body {
-  background: #faeade;
+  background: var(--color-milk);
   color: var(--foreground);
-  font-family: var(--font-proxima-nova), sans-serif;
+  font-family: var(--font-paragraph);
   overflow-x: hidden;
 }
 
@@ -98,7 +156,7 @@ h1, h2, h3, h4, h5, h6 {
   /* Roulette / section hint/sub-text */
   .section-hint {
     @apply font-lato text-sm mt-2 opacity-75;
-    color: #a26833;
+    color: var(--color-mid-brown);
   }
 
   /* Shared prev/next arrow navigation button */
@@ -111,6 +169,28 @@ h1, h2, h3, h4, h5, h6 {
 
   .btn-nav-arrow:hover { @apply scale-110 -translate-y-1/2; }
   .btn-nav-arrow:disabled { @apply opacity-30; }
+}
+
+/* ── Ghost-title shared style ──────────────────────────────── */
+/*
+ * Used by the large transparent-gradient headings in
+ * HeroSection ("LITSOC") and EventsCarousel ("Our Events").
+ * Override --_ghost-from / --_ghost-to per instance to
+ * change gradient stop positions (defaults: 40 % / 100 %).
+ */
+.ghost-title {
+  letter-spacing: -0.02em;
+  font-family: var(--font-antonio), "Antonio", sans-serif;
+  background:
+    linear-gradient(
+      to bottom,
+      var(--ghost-text-start) var(--_ghost-from, 40%),
+      var(--ghost-text-end)   var(--_ghost-to, 100%)
+    );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  user-select: none;
 }
 
 /* ── Ghost-title animations ────────────────────────────────── */

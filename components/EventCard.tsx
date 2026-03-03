@@ -27,7 +27,7 @@ function formatDate(dateStr: string, time?: string): string {
 
 /* ─── Fallback gradient bg when no image ────────────────────────────────────── */
 const FALLBACK_GRADIENT =
-  "linear-gradient(90deg, #faeade 0%, #735233 100%)";
+  "linear-gradient(90deg, var(--color-milk) 0%, var(--color-warm-brown) 100%)";
 
 /* ─── Event Card ─────────────────────────────────────────────────────────────── */
 export default function EventCard({ event, onClose }: EventCardProps) {
@@ -54,19 +54,19 @@ export default function EventCard({ event, onClose }: EventCardProps) {
       <div
         className="fixed inset-0 z-50 flex items-center justify-center px-4"
         onClick={onClose}
-        style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(3px)" }}
+        style={{ background: "var(--overlay-55)", backdropFilter: "blur(3px)" }}
       >
         <div
           className="relative flex w-full max-w-3xl flex-col overflow-hidden rounded-3xl shadow-2xl md:flex-row"
           onClick={(e) => e.stopPropagation()}
-          style={{ background: "#faeade", minHeight: 340 }}
+          style={{ background: "var(--color-milk)", minHeight: 340 }}
         >
           {/* ── Left: text content ── */}
           <div className="flex flex-1 flex-col justify-center gap-4 p-8 md:p-10">
             <MagnetWrap className="self-start">
               <span
                 className="inline-block rounded-full px-3 py-1 text-sm font-semibold uppercase tracking-widest"
-                style={{ background: "#523122", color: "#faeade" }}
+                style={{ background: "var(--color-dark-brown)", color: "var(--color-milk)" }}
               >
                 {event.subsoc}
               </span>
@@ -131,7 +131,7 @@ export default function EventCard({ event, onClose }: EventCardProps) {
             )}
             <div
               className="absolute inset-0"
-              style={{ background: "linear-gradient(to right, #faeade 0%, transparent 30%)" }}
+              style={{ background: "linear-gradient(to right, var(--color-milk) 0%, transparent 30%)" }}
             />
           </div>
 
@@ -157,19 +157,19 @@ export default function EventCard({ event, onClose }: EventCardProps) {
     <div
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
       onClick={onClose}
-      style={{ background: "rgba(0,0,0,0.55)", backdropFilter: "blur(3px)" }}
+      style={{ background: "var(--overlay-55)", backdropFilter: "blur(3px)" }}
     >
       <div
         className="relative flex w-full max-w-3xl flex-col overflow-hidden rounded-3xl shadow-2xl md:flex-row"
         onClick={(e) => e.stopPropagation()}
-        style={{ background: "#faeade", minHeight: 340 }}
+        style={{ background: "var(--color-milk)", minHeight: 340 }}
       >
         {/* ── Left: text content ── */}
         <div className="flex flex-1 flex-col justify-center gap-4 p-8 md:p-10">
           <MagnetWrap className="self-start">
             <span
               className="inline-block rounded-full px-3 py-1 text-sm font-semibold uppercase tracking-widest"
-              style={{ background: "#523122", color: "#faeade" }}
+              style={{ background: "var(--color-dark-brown)", color: "var(--color-milk)" }}
             >
               {event.subsoc}
             </span>
@@ -226,7 +226,7 @@ export default function EventCard({ event, onClose }: EventCardProps) {
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(to right, #faeade 0%, transparent 30%)",
+              background: "linear-gradient(to right, var(--color-milk) 0%, transparent 30%)",
             }}
           />
         </div>

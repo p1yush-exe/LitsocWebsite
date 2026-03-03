@@ -244,8 +244,10 @@ export default function EventsCarousel() {
       <style>{`@keyframes ec-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
       {/* ── "OUR EVENTS" ghost title ── */}
       <h1
-        className="pointer-events-none absolute left-1/2 whitespace-nowrap font-black uppercase leading-none"
+        className="ghost-title pointer-events-none absolute left-1/2 whitespace-nowrap font-black uppercase leading-none"
         style={{
+          "--_ghost-from": "50%",
+          "--_ghost-to": "80%",
           top: isMobile ? 10 : 40,
           transform: eventsPopped
             ? "translateX(-50%) translateY(-20%)"
@@ -253,15 +255,8 @@ export default function EventsCarousel() {
           opacity: eventsPopped ? 1 : 0,
           transition: "transform 0.85s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.6s ease",
           fontSize: isMobile ? "3.5rem" : `${13 * desktopScale}rem`,
-          letterSpacing: "-0.02em",
-          fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
           zIndex: 0,
-          background: "linear-gradient(to bottom, var(--ghost-text-start) 50%, var(--ghost-text-end) 80%)",
-          WebkitBackgroundClip: "text",
-          backgroundClip: "text",
-          color: "transparent",
-          userSelect: "none",
-        }}
+        } as React.CSSProperties}
       >
         Our Events
       </h1>
@@ -303,7 +298,7 @@ export default function EventsCarousel() {
               const isUnlocked = unlockedVideos.has(i);
               const isHovered = isCenter && hoverIdx === i;
               const thumb = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
-              const circleR = 70;
+              const circleR = 68;
               const svgSize = (circleR + 16) * 2;
               const exitStyle: React.CSSProperties = expandedIdx !== null ? (() => {
                 const offset = ((i - expandedIdx) + videos.length) % videos.length;
@@ -346,7 +341,7 @@ export default function EventsCarousel() {
                     height: cardH,
                     borderRadius: 20,
                     overflow: "hidden",
-                    boxShadow: isCenter ? "0 28px 70px rgba(0,0,0,0.7)" : "0 20px 40px rgba(0,0,0,0.4)",
+                    boxShadow: isCenter ? "0 28px 70px var(--shadow-70)" : "0 20px 40px var(--shadow-40)",
                     transition: isMobile ? "transform 300ms ease, opacity 250ms ease" : "all 0.45s cubic-bezier(0.25,0.46,0.45,0.94)",
                     ...styleMap[pos],
                     ...(isHovered && !isMobile ? { transform: "scale(1.13) translateZ(0)" } : {}),
@@ -417,7 +412,7 @@ export default function EventsCarousel() {
                                 d={`M ${svgSize / 2},${svgSize / 2} m -${circleR},0 a ${circleR},${circleR} 0 1,1 ${circleR * 2},0 a ${circleR},${circleR} 0 1,1 -${circleR * 2},0`}
                               />
                             </defs>
-                            <text fontSize="10.5" fill="rgba(255,255,255,0.88)" letterSpacing="3.5" fontFamily="inherit">
+                            <text fontSize="10.5" fill="var(--white-88)" letterSpacing="3.5" fontFamily="inherit">
                               <textPath href={`#ctp-${i}`}>
                                 {"· PLAY THE VIDEO · PLAY THE VIDEO · PLAY THE VIDEO · PLAY THE VIDEO "}
                               </textPath>
@@ -426,7 +421,7 @@ export default function EventsCarousel() {
                           {/* play button */}
                           <div style={{
                             width: 100, height: 100, borderRadius: "50%",
-                            background: "rgba(0,0,0,0.65)",
+                            background: "var(--overlay-65)",
                             display: "flex", alignItems: "center", justifyContent: "center",
                             backdropFilter: "blur(4px)",
                           }}>
@@ -466,7 +461,7 @@ export default function EventsCarousel() {
                                   d={`M ${mSvg / 2},${mSvg / 2} m -${mR},0 a ${mR},${mR} 0 1,1 ${mR * 2},0 a ${mR},${mR} 0 1,1 -${mR * 2},0`}
                                 />
                               </defs>
-                              <text fontSize="8" fill="rgba(255,255,255,0.88)" fontFamily="inherit">
+                              <text fontSize="8" fill="var(--white-88)" fontFamily="inherit">
                                 <textPath href={`#ctp-m-${i}`} textLength={mCirc} lengthAdjust="spacing">
                                   {"·PLAY THE VIDEO·PLAY THE VIDEO"}
                                 </textPath>
@@ -475,7 +470,7 @@ export default function EventsCarousel() {
                             {/* play button */}
                             <div style={{
                               width: 56, height: 56, borderRadius: "50%",
-                              background: "rgba(0,0,0,0.6)",
+                              background: "var(--overlay-60)",
                               display: "flex", alignItems: "center", justifyContent: "center",
                               backdropFilter: "blur(4px)",
                             }}>
@@ -534,7 +529,7 @@ export default function EventsCarousel() {
               style={{
                 background: "none", border: "none", cursor: "pointer",
                 display: "flex", alignItems: "center", gap: 3,
-                color: "#523122", fontSize: 13, fontWeight: 700,
+                color: "var(--color-dark-brown)", fontSize: 13, fontWeight: 700,
                 fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
                 textTransform: "uppercase", letterSpacing: "0.06em", opacity: 0.7,
               }}
@@ -550,7 +545,7 @@ export default function EventsCarousel() {
                   style={{
                     width: 7, height: 7, borderRadius: "50%", border: "none", cursor: "pointer", padding: 0,
                     transition: "all 0.3s ease",
-                    background: i === current ? "#a26833" : "rgba(162,104,51,0.2)",
+                    background: i === current ? "var(--color-mid-brown)" : "var(--mid-brown-20)",
                     transform: i === current ? "scale(1.2)" : "scale(1)",
                     flexShrink: 0,
                   }}
@@ -563,7 +558,7 @@ export default function EventsCarousel() {
               style={{
                 background: "none", border: "none", cursor: "pointer",
                 display: "flex", alignItems: "center", gap: 3,
-                color: "#523122", fontSize: 13, fontWeight: 700,
+                color: "var(--color-dark-brown)", fontSize: 13, fontWeight: 700,
                 fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
                 textTransform: "uppercase", letterSpacing: "0.06em", opacity: 0.7,
               }}
@@ -583,7 +578,7 @@ export default function EventsCarousel() {
               style={{
                 width: 12, height: 12, borderRadius: "50%", border: "none", cursor: "pointer", padding: 0,
                 transition: "all 0.3s ease",
-                background: i === current ? "#a26833" : "rgba(162,104,51,0.2)",
+                background: i === current ? "var(--color-mid-brown)" : "var(--mid-brown-20)",
                 transform: i === current ? "scale(1.2)" : "scale(1)",
                 flexShrink: 0,
               }}
@@ -600,8 +595,8 @@ export default function EventsCarousel() {
         onClick={handleCollapse}
         style={{
           position: "fixed", inset: 0, zIndex: 9000,
-          background: isMobile ? "rgba(36,22,15,0.85)" : "rgba(82,49,34,0.94)",
-          backdropFilter: isMobile ? "blur(18px)" : "blur(12px)",
+          background: isMobile ? "var(--darker-brown-85)" : "var(--dark-brown-94)",
+          backdropFilter: "blur(18px)",
           display: "flex", alignItems: "center", justifyContent: "center",
           flexDirection: "column",
           opacity: expandOpen ? 1 : 0,
@@ -622,10 +617,10 @@ export default function EventsCarousel() {
               opacity: expandOpen ? 1 : 0,
               transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1) 0.15s, opacity 0.4s ease 0.15s",
             }}>
-              <h2 style={{ fontSize: 22, fontWeight: 700, color: "#faeade", fontFamily: 'var(--font-antonio), "Antonio", sans-serif' }}>
+              <h2 style={{ fontSize: 22, fontWeight: 700, color: "var(--color-milk)", fontFamily: 'var(--font-antonio), "Antonio", sans-serif' }}>
                 {videos[expandedIdx].title}
               </h2>
-              <p style={{ fontSize: 12, marginTop: 4, textTransform: "uppercase", letterSpacing: "0.12em", color: "rgba(250,234,222,0.6)" }}>
+              <p style={{ fontSize: 12, marginTop: 4, textTransform: "uppercase", letterSpacing: "0.12em", color: "var(--milk-60)" }}>
                 {videos[expandedIdx].description}
               </p>
             </div>
@@ -646,9 +641,9 @@ export default function EventsCarousel() {
                 style={{
                   position: "absolute", top: 8, right: 8, zIndex: 2,
                   width: 36, height: 36, borderRadius: "50%",
-                  background: "rgba(250,234,222,0.18)",
+                  background: "var(--milk-18)",
                   border: "none",
-                  color: "#faeade", fontSize: 18, cursor: "pointer",
+                  color: "var(--color-milk)", fontSize: 18, cursor: "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center",
                   backdropFilter: "blur(4px)",
                 }}
@@ -664,7 +659,7 @@ export default function EventsCarousel() {
                 style={{
                   background: "none", border: "none", cursor: "pointer",
                   display: "flex", alignItems: "center", gap: 4,
-                  color: "#faeade", fontSize: 15, fontWeight: 700,
+                  color: "var(--color-milk)", fontSize: 15, fontWeight: 700,
                   fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
                   textTransform: "uppercase", letterSpacing: "0.06em",
                 }}
@@ -676,7 +671,7 @@ export default function EventsCarousel() {
                 style={{
                   background: "none", border: "none", cursor: "pointer",
                   display: "flex", alignItems: "center", gap: 4,
-                  color: "#faeade", fontSize: 15, fontWeight: 700,
+                  color: "var(--color-milk)", fontSize: 15, fontWeight: 700,
                   fontFamily: 'var(--font-antonio), "Antonio", sans-serif',
                   textTransform: "uppercase", letterSpacing: "0.06em",
                 }}
@@ -698,7 +693,7 @@ export default function EventsCarousel() {
                   style={{
                     width: 8, height: 8, borderRadius: "50%", border: "none", cursor: "pointer", padding: 0,
                     transition: "all 0.3s ease",
-                    background: i === expandedIdx ? "#faeade" : "rgba(250,234,222,0.3)",
+                    background: i === expandedIdx ? "var(--color-milk)" : "var(--milk-30)",
                     transform: i === expandedIdx ? "scale(1.3)" : "scale(1)",
                   }}
                   aria-label={`Go to video ${i + 1}`}
@@ -726,26 +721,22 @@ export default function EventsCarousel() {
               <button
                 onClick={() => { pauseVideo(expandedIdx); setExpandedIdx((expandedIdx - 1 + videos.length) % videos.length); }}
                 style={{
-                  position: "absolute", left: -72, top: "50%", transform: "translateY(-50%)",
-                  width: 52, height: 52, borderRadius: "50%",
-                  background: "rgba(250,234,222,0.15)",
-                  border: "1.5px solid rgba(250,234,222,0.35)",
-                  fontSize: 28, color: "#faeade", cursor: "pointer",
+                  position: "absolute", left: -100, top: "50%", transform: "translateY(-50%)",
+                  background: "none", border: "none",
+                  fontSize: 80, color: "var(--color-milk)", cursor: "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  backdropFilter: "blur(5px)",
+                  padding: 0, lineHeight: 1,
                 }}
               >‹</button>
               {/* Next arrow */}
               <button
                 onClick={() => { pauseVideo(expandedIdx); setExpandedIdx((expandedIdx + 1) % videos.length); }}
                 style={{
-                  position: "absolute", right: -72, top: "50%", transform: "translateY(-50%)",
-                  width: 52, height: 52, borderRadius: "50%",
-                  background: "rgba(250,234,222,0.15)",
-                  border: "1.5px solid rgba(250,234,222,0.35)",
-                  fontSize: 28, color: "#faeade", cursor: "pointer",
+                  position: "absolute", right: -100, top: "50%", transform: "translateY(-50%)",
+                  background: "none", border: "none",
+                  fontSize: 80, color: "var(--color-milk)", cursor: "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  backdropFilter: "blur(5px)",
+                  padding: 0, lineHeight: 1,
                 }}
               >›</button>
             </div>
@@ -755,14 +746,12 @@ export default function EventsCarousel() {
                 onClick={handleCollapse}
                 aria-label="Close video"
                 style={{
-                  width: 44, height: 44, borderRadius: "50%",
-                  background: "rgba(250,234,222,0.15)",
-                  border: "1.5px solid rgba(250,234,222,0.35)",
-                  color: "#faeade", fontSize: 20, cursor: "pointer",
+                  background: "none", border: "none",
+                  color: "var(--color-milk)", fontSize: 44, cursor: "pointer",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  backdropFilter: "blur(6px)",
                   flexShrink: 0,
                   marginTop: 4,
+                  padding: 0, lineHeight: 1,
                 }}
               >✕</button>
             </MagnetWrap>

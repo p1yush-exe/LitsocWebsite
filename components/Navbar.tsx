@@ -145,8 +145,8 @@ export default function Navbar() {
               <motion.span
                 key={ctaConfig.label + "-flash"}
                 className="pointer-events-none absolute inset-0 rounded-full"
-                initial={{ backgroundColor: "rgba(82,49,34,0.35)" }}
-                animate={{ backgroundColor: "rgba(82,49,34,0)" }}
+                initial={{ backgroundColor: "var(--dark-brown-35)" }}
+                animate={{ backgroundColor: "var(--dark-brown-0)" }}
                 transition={{ duration: 0.45, ease: "easeOut" }}
               />
             </AnimatePresence>

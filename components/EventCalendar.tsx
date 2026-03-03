@@ -28,7 +28,7 @@ function HandCircle({ delay = 0, isInView = false }: { delay?: number; isInView?
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
       <motion.path
         d="M10 4 C30 6 43 10 40 23 C40 34 35 43 24 43 C10 43 5 35 5 24 C5 13 12 5 24 2"
-        stroke="#a02128" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
+        stroke="var(--color-red)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
         {...p(isInView, delay)}
       />
     </svg>
@@ -40,7 +40,7 @@ function HandCircle2({ delay = 0, isInView = false }: { delay?: number; isInView
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
       <motion.path
         d="M7 6 C34 4 43 12 43 23 C43 34 35 43 24 43 C10 43 5 35 5 24 C5 13 12 5 24 2"
-        stroke="#a02128" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
+        stroke="var(--color-red)" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" fill="none"
         {...p(isInView, delay)}
       />
     </svg>
@@ -53,9 +53,9 @@ function HandArrowLeft() {
   return (
     <span ref={ref}>
       <svg viewBox="0 0 28 28" fill="none" className="h-13 w-13" aria-hidden>
-        <motion.path d="M22 14.2 C17.5 13.6 12.5 14.8 7 14" stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0)} />
-        <motion.path d="M11.5 9 C9.5 11 7.5 12.8 7 14"        stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.15)} />
-        <motion.path d="M7 14 C7.5 15.5 9.5 17.2 11.5 19"     stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.25)} />
+        <motion.path d="M22 14.2 C17.5 13.6 12.5 14.8 7 14" stroke="var(--color-dark-brown)" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0)} />
+        <motion.path d="M11.5 9 C9.5 11 7.5 12.8 7 14"        stroke="var(--color-dark-brown)" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.15)} />
+        <motion.path d="M7 14 C7.5 15.5 9.5 17.2 11.5 19"     stroke="var(--color-dark-brown)" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.25)} />
       </svg>
     </span>
   );
@@ -67,9 +67,9 @@ function HandArrowRight() {
   return (
     <span ref={ref}>
       <svg viewBox="0 0 28 28" fill="none" className="h-13 w-13" aria-hidden>
-        <motion.path d="M6 14 C10.5 14.8 15.5 13.6 21 14.2" stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0)} />
-        <motion.path d="M16.5 9 C18.5 11 20.5 12.8 21 14"    stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.15)} />
-        <motion.path d="M21 14 C20.5 15.5 18.5 17.2 16.5 19" stroke="#523122" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.25)} />
+        <motion.path d="M6 14 C10.5 14.8 15.5 13.6 21 14.2" stroke="var(--color-dark-brown)" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0)} />
+        <motion.path d="M16.5 9 C18.5 11 20.5 12.8 21 14"    stroke="var(--color-dark-brown)" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.15)} />
+        <motion.path d="M21 14 C20.5 15.5 18.5 17.2 16.5 19" stroke="var(--color-dark-brown)" strokeWidth="2.1" strokeLinecap="round" {...p(iv, 0.25)} />
       </svg>
     </span>
   );
@@ -78,14 +78,14 @@ function HandArrowRight() {
 function HandX({ delay = 0, isInView = false, done = false }: { delay?: number; isInView?: boolean; done?: boolean }) {
   if (done) return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
-      <path d="M9 11 C22 15 24 24 37 34"  stroke="#a02128" strokeWidth="2"   strokeLinecap="round" />
-      <path d="M43 13 C32 15 24 24 11 37" stroke="#a02128" strokeWidth="2"   strokeLinecap="round" />
+      <path d="M9 11 C22 15 24 24 37 34"  stroke="var(--color-red)" strokeWidth="2"   strokeLinecap="round" />
+      <path d="M43 13 C32 15 24 24 11 37" stroke="var(--color-red)" strokeWidth="2"   strokeLinecap="round" />
     </svg>
   );
   return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
-      <motion.path d="M9 11 C22 15 24 24 37 34"  stroke="#a02128" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay)} />
-      <motion.path d="M43 13 C32 15 24 24 11 37" stroke="#a02128" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay + 0.2)} />
+      <motion.path d="M9 11 C22 15 24 24 37 34"  stroke="var(--color-red)" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay)} />
+      <motion.path d="M43 13 C32 15 24 24 11 37" stroke="var(--color-red)" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay + 0.2)} />
     </svg>
   );
 }
@@ -93,14 +93,14 @@ function HandX({ delay = 0, isInView = false, done = false }: { delay?: number; 
 function HandX2({ delay = 0, isInView = false, done = false }: { delay?: number; isInView?: boolean; done?: boolean }) {
   if (done) return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
-      <path d="M8 8 C14 18 28 26 40 38"  stroke="#a02128" strokeWidth="2.2" strokeLinecap="round" />
-      <path d="M40 8 C30 20 20 26 8 40"  stroke="#a02128" strokeWidth="2.3" strokeLinecap="round" />
+      <path d="M8 8 C14 18 28 26 40 38"  stroke="var(--color-red)" strokeWidth="2.2" strokeLinecap="round" />
+      <path d="M40 8 C30 20 20 26 8 40"  stroke="var(--color-red)" strokeWidth="2.3" strokeLinecap="round" />
     </svg>
   );
   return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
-      <motion.path d="M8 8 C14 18 28 26 40 38"  stroke="#a02128" strokeWidth="2.2" strokeLinecap="round" {...p(isInView, delay)} />
-      <motion.path d="M40 8 C30 20 20 26 8 40"  stroke="#a02128" strokeWidth="2.3" strokeLinecap="round" {...p(isInView, delay + 0.2)} />
+      <motion.path d="M8 8 C14 18 28 26 40 38"  stroke="var(--color-red)" strokeWidth="2.2" strokeLinecap="round" {...p(isInView, delay)} />
+      <motion.path d="M40 8 C30 20 20 26 8 40"  stroke="var(--color-red)" strokeWidth="2.3" strokeLinecap="round" {...p(isInView, delay + 0.2)} />
     </svg>
   );
 }
@@ -108,14 +108,14 @@ function HandX2({ delay = 0, isInView = false, done = false }: { delay?: number;
 function HandX3({ delay = 0, isInView = false, done = false }: { delay?: number; isInView?: boolean; done?: boolean }) {
   if (done) return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
-      <path d="M12 9 C18 16 26 26 39 40" stroke="#a02128" strokeWidth="2"   strokeLinecap="round" />
-      <path d="M38 11 C28 17 22 24 9 39"  stroke="#a02128" strokeWidth="2.3" strokeLinecap="round" />
+      <path d="M12 9 C18 16 26 26 39 40" stroke="var(--color-red)" strokeWidth="2"   strokeLinecap="round" />
+      <path d="M38 11 C28 17 22 24 9 39"  stroke="var(--color-red)" strokeWidth="2.3" strokeLinecap="round" />
     </svg>
   );
   return (
     <svg viewBox="0 0 48 48" fill="none" className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden>
-      <motion.path d="M12 9 C18 16 26 26 39 40" stroke="#a02128" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay)} />
-      <motion.path d="M38 11 C28 17 22 24 9 39"  stroke="#a02128" strokeWidth="2.3" strokeLinecap="round" {...p(isInView, delay + 0.2)} />
+      <motion.path d="M12 9 C18 16 26 26 39 40" stroke="var(--color-red)" strokeWidth="2"   strokeLinecap="round" {...p(isInView, delay)} />
+      <motion.path d="M38 11 C28 17 22 24 9 39"  stroke="var(--color-red)" strokeWidth="2.3" strokeLinecap="round" {...p(isInView, delay + 0.2)} />
     </svg>
   );
 }
@@ -243,8 +243,8 @@ export default function EventCalendar() {
             className="overflow-visible"
             style={{
               position: "relative",
-              background: "#faeade",
-              boxShadow: "3px 4px 0 rgba(82,49,34,0.10), -1px -1px 0 rgba(82,49,34,0.06)",
+              background: "var(--color-milk)",
+              boxShadow: "3px 4px 0 var(--dark-brown-10), -1px -1px 0 var(--dark-brown-06)",
             }}
           >
             {/* Paper texture overlay — blends with cell colors via mix-blend-mode */}
@@ -262,12 +262,12 @@ export default function EventCalendar() {
               }}
             />
             {/* Day headers */}
-            <div className="grid grid-cols-7" style={{ borderBottom: "2px solid rgba(82,49,34,0.30)", background: "#faeade" }}>
+            <div className="grid grid-cols-7" style={{ borderBottom: "2px solid var(--dark-brown-30)", background: "var(--color-milk)" }}>
               {DAY_NAMES.map((d, di) => (
                 <div
                   key={d}
                   className="font-lato py-2.5 text-center text-sm md:text-lg lg:text-xl font-semibold uppercase tracking-widest text-mid-brown"
-                  style={di < 6 ? { borderRight: "1.5px solid rgba(82,49,34,0.18)" } : undefined}
+                  style={di < 6 ? { borderRight: "1.5px solid var(--dark-brown-18)" } : undefined}
                 >
                   {d}
                 </div>
@@ -286,15 +286,15 @@ export default function EventCalendar() {
                   const isLastCol = col === 6;
                   const stagger = col * 0.06 + Math.floor(i / 7) * 0.04;
                   const cellBorder: CSSProperties = {
-                    borderRight: isLastCol ? undefined : "1.5px solid rgba(82,49,34,0.15)",
-                    borderBottom: "1.5px solid rgba(82,49,34,0.15)",
+                    borderRight: isLastCol ? undefined : "1.5px solid var(--dark-brown-15)",
+                    borderBottom: "1.5px solid var(--dark-brown-15)",
                   };
 
                   if (day === null) {
                     return (
                       <div
                         key={`e-${i}`}
-                        style={{ height: 96, background: "#faeade", ...cellBorder }}
+                        style={{ height: 96, background: "var(--color-milk)", ...cellBorder }}
                       />
                     );
                   }
@@ -309,9 +309,9 @@ export default function EventCalendar() {
                     : null;
 
                   /* Subtle background tint for event cells */
-                  let cellBg = "#faeade";
-                  if (hasUpcoming) cellBg = "#fce8d8";
-                  if (hasPast)     cellBg = "#fce8d8";
+                  let cellBg = "var(--color-milk)";
+                  if (hasUpcoming) cellBg = "var(--color-event-highlight)";
+                  if (hasPast)     cellBg = "var(--color-event-highlight)";
 
                   return (
                     <div
@@ -340,12 +340,12 @@ export default function EventCalendar() {
                           top: 14,
                           fontSize: 22,
                           color: isToday
-                            ? "#a02128"
+                            ? "var(--color-red)"
                             : hasUpcoming
-                            ? "#a02128"
+                            ? "var(--color-red)"
                             : hasPast
-                            ? "#a26833"
-                            : "#523122",
+                            ? "var(--color-mid-brown)"
+                            : "var(--color-dark-brown)",
                           fontWeight: isToday || hasUpcoming ? 800 : 500,
                           zIndex: 2,
                           position: "absolute",
@@ -358,7 +358,7 @@ export default function EventCalendar() {
                       {isToday && (
                         <span
                           className="absolute rounded-full"
-                          style={{ top: 40, left: "50%", transform: "translateX(-50%)", height: 2, width: 16, background: "#a02128" }}
+                          style={{ top: 40, left: "50%", transform: "translateX(-50%)", height: 2, width: 16, background: "var(--color-red)" }}
                         />
                       )}
 
@@ -390,7 +390,7 @@ export default function EventCalendar() {
                       {primaryEvent && (
                         <span
                           className="absolute bottom-1.5 left-1 right-1 block truncate text-[10px] sm:text-[11px] font-semibold leading-none"
-                          style={{ color: "#a02128" }}
+                          style={{ color: "var(--color-red)" }}
                         >
                           {primaryEvent.title}
                         </span>
@@ -407,14 +407,14 @@ export default function EventCalendar() {
             <span className="flex items-center gap-1.5 text-[11px] text-mid-brown">
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0">
                 <path d="M12 3 C17 2 22 7 22 12 C22 18 17 22 12 22 C7 22 2 17 2 12 C2 7 7 2 12 3Z"
-                  stroke="#a02128" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+                  stroke="var(--color-red)" strokeWidth="1.6" strokeLinecap="round" fill="none" />
               </svg>
               Upcoming
             </span>
             <span className="flex items-center gap-1.5 text-[11px] text-mid-brown">
               <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4 shrink-0">
-                <path d="M5 5 C8 9 12 12 19 19" stroke="#a02128" strokeWidth="1.6" strokeLinecap="round" />
-                <path d="M19 5 C16 9 12 12 5 19" stroke="#a02128" strokeWidth="1.6" strokeLinecap="round" />
+                <path d="M5 5 C8 9 12 12 19 19" stroke="var(--color-red)" strokeWidth="1.6" strokeLinecap="round" />
+                <path d="M19 5 C16 9 12 12 5 19" stroke="var(--color-red)" strokeWidth="1.6" strokeLinecap="round" />
               </svg>
               Past event
             </span>

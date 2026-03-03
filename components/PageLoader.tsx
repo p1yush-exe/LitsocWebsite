@@ -62,7 +62,7 @@ export default function PageLoader() {
         position:        "fixed",
         inset:           0,
         zIndex:          9999,
-        background:      "#faeade",
+        background:      "var(--color-milk)",
         display:         "flex",
         flexDirection:   "column",
         alignItems:      "center",
@@ -87,7 +87,7 @@ export default function PageLoader() {
         style={{
           width:        220,
           height:       3,
-          background:   "rgba(82,49,34,0.15)",
+          background:   "var(--dark-brown-15)",
           borderRadius: 4,
           overflow:     "hidden",
         }}
@@ -97,7 +97,7 @@ export default function PageLoader() {
           style={{
             height:       "100%",
             width:        `${progress}%`,
-            background:   "linear-gradient(90deg, #7f3b2d, #a26833)",
+            background:   "linear-gradient(90deg, var(--color-red-brown), var(--color-mid-brown))",
             borderRadius: 4,
             transition:   "width 0.04s linear",
           }}
