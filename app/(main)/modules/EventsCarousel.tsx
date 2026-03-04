@@ -254,7 +254,7 @@ export default function EventsCarousel() {
             : "translateX(-50%) translateY(30%)",
           opacity: eventsPopped ? 1 : 0,
           transition: "transform 0.85s cubic-bezier(0.34, 1.4, 0.64, 1), opacity 0.6s ease",
-          fontSize: isMobile ? "3.5rem" : `${13 * desktopScale}rem`,
+           fontSize: isMobile ? "5rem" : `${13 * desktopScale}rem`,
           zIndex: 0,
         } as React.CSSProperties}
       >
@@ -269,7 +269,7 @@ export default function EventsCarousel() {
           maxWidth: 1300,
           height: trackH,
           perspective: "1200px",
-          marginTop: isMobile ? 2 : Math.round(150 * desktopScale),
+           marginTop: isMobile ? 32 : Math.round(150 * desktopScale),
           zIndex: 1,
         }}
       >
@@ -510,7 +510,7 @@ export default function EventsCarousel() {
         className="relative -mt-3 md:mt-12 text-center transition-all duration-500"
         style={{ zIndex: 1, opacity: nameVisible && expandedIdx === null ? 1 : 0, width: "100%" }}
       >
-        <h2 className="relative inline-block font-bold text-dark-brown" style={{ fontSize: isMobile ? "1.4rem" : undefined, textAlign: "center" }}>
+        <h2 className="relative text-4xl inline-block font-bold text-dark-brown" style={{ fontSize: isMobile ? "1.4rem" : undefined, textAlign: "center" }}>
           {!isMobile && <span className="absolute top-1/2 right-full mr-6 h-px w-28 -translate-y-1/2 bg-mid-brown/40" />}
           {videos[current]?.title ?? ""}
           {!isMobile && <span className="absolute top-1/2 left-full ml-6 h-px w-28 -translate-y-1/2 bg-mid-brown/40" />}

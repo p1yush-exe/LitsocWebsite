@@ -238,7 +238,6 @@ export default function RouletteSection() {
       {/* Background atmosphere */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-96 w-96 rounded-full bg-rose-300/20 blur-[120px]" />
-        <div className="absolute top-16 left-1/2 -translate-x-1/2 h-40 w-72 rounded-full bg-indigo-200/20 blur-[80px]" />
       </div>
 
       {/* Headings */}
@@ -260,7 +259,7 @@ export default function RouletteSection() {
           onClick={stepLeft}
           disabled={busy}
           aria-label="Previous"
-          className="btn-nav-arrow left-2 md:left-6 text-[40px] md:text-[80px]"
+          className="btn-nav-arrow left-10 md:left-20 text-[40px] md:text-[80px]"
           style={{ background: "transparent", border: "none" }}
         >
           ‹
@@ -271,7 +270,7 @@ export default function RouletteSection() {
           onClick={stepRight}
           disabled={busy}
           aria-label="Next"
-          className="btn-nav-arrow right-2 md:right-6 text-[40px] md:text-[80px]"
+          className="btn-nav-arrow right-10 md:right-20 text-[40px] md:text-[80px]"
           style={{ background: "transparent", border: "none"}}
         >
           ›
@@ -421,7 +420,7 @@ export default function RouletteSection() {
         <p className="mt-1 text-sm text-mid-brown max-w-xs mx-auto font-lato">
           {subsocs[centerIdx].desc}
         </p>
-        <p className="mt-3 animate-pulse text-[10px] uppercase tracking-[0.3em] text-brown-red font-lato">
+        <p className="mt-3 font-bold animate-pulse text-[10px] uppercase tracking-[0.3em] text-brown-red font-lato">
           pull trigger to enter
         </p>
       </div>

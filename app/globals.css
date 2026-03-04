@@ -97,16 +97,16 @@
 }
 
 /* ── Utilities ─────────────────────────────────────────────── */
-@utility nav-bg {
+.nav-bg {
   background: var(--color-milk);
   box-shadow: 0 1px 0 var(--shadow-08), 0 2px 8px var(--shadow-06);
 }
 
-@utility font-lato {
+.font-lato {
   font-family: var(--font-proxima-nova), sans-serif;
 }
 
-@utility font-antonio {
+.font-antonio {
   font-family: var(--font-antonio), "Antonio", sans-serif;
 }
 
@@ -142,33 +142,140 @@ h1, h2, h3, h4, h5, h6 {
     }
   }
 
+  
+/*Socials in hero*/
+
+.parent {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.child {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform-style: preserve-3d;
+  transition: all 0.3s cubic-bezier(0.68, 0.85, 0.265, 1.85);
+  border-radius: 5px;
+  margin: 0 5px;
+  box-shadow:
+    inset 1px 1px 2px #fff,
+    0 0 5px #4442;
+}
+
+.child:hover {
+  background-color: white;
+  background-position:
+    -100px 100px,
+    -100px 100px;
+  /*transform: rotate3d(0.5, 1, 0, 30deg);*/
+  transform: perspective(180px) rotateX(60deg) translateY(2px);
+}
+
+.child-1:hover {
+  box-shadow: 0px 10px 10px #1e90ff;
+}
+.child-2:hover {
+  box-shadow: 0px 10px 10px #ff00ff;
+}
+.child-3:hover {
+  box-shadow: 0px 10px 10px #000;
+}
+.child-4:hover {
+  box-shadow: 0px 10px 10px #4267b2;
+}
+
+.button {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background-color: transparent;
+  font-size: 20px;
+  transition-duration: 0.5s;
+  transition-timing-function: cubic-bezier(0.68, -0.85, 0.265, 1.55);
+}
+
+.child:hover > .button {
+  transform: translate3d(0px, 20px, 30px) perspective(80px) rotateX(-60deg)
+    translateY(2px) translateZ(10px);
+}
+
+
   .section-label {
-    @apply font-lato text-xs font-semibold uppercase mb-1 text-red-brown;
+    font-family: var(--font-proxima-nova), sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+    color: var(--color-red-brown);
     letter-spacing: 0.28em;
   }
 
   /* Roulette / section main heading (e.g. "CHOOSE YOUR VICE") */
   .section-heading {
-    @apply font-antonio text-4xl md:text-5xl font-bold text-foreground mb-1;
+    font-family: var(--font-antonio), "Antonio", sans-serif;
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
     letter-spacing: -0.01em;
+  }
+
+  @media (min-width: 768px) {
+    .section-heading {
+      font-size: 3rem;
+    }
   }
 
   /* Roulette / section hint/sub-text */
   .section-hint {
-    @apply font-lato text-sm mt-2 opacity-75;
+    font-family: var(--font-proxima-nova), sans-serif;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    opacity: 0.75;
     color: var(--color-mid-brown);
   }
 
   /* Shared prev/next arrow navigation button */
   .btn-nav-arrow {
-    @apply absolute z-50 flex items-center justify-center w-10 h-10 leading-none pb-0.5
-           text-foreground transition-transform duration-[150ms] ease-in-out
-           top-1/2 -translate-y-1/2
-           md:rounded-full md:bg-black/6 md:border md:border-black/10;
+    position: absolute;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    line-height: 1;
+    padding-bottom: 0.125rem;
+    color: var(--foreground);
+    transition: transform 150ms ease-in-out;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
-  .btn-nav-arrow:hover { @apply scale-110 -translate-y-1/2; }
-  .btn-nav-arrow:disabled { @apply opacity-30; }
+  @media (min-width: 768px) {
+    .btn-nav-arrow {
+      border-radius: 9999px;
+      background: var(--shadow-06);
+      border: 1px solid var(--shadow-10);
+    }
+  }
+
+  .btn-nav-arrow:hover {
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .btn-nav-arrow:disabled {
+    opacity: 0.3;
+  }
 }
 
 /* ── Ghost-title shared style ──────────────────────────────── */
@@ -192,6 +299,7 @@ h1, h2, h3, h4, h5, h6 {
   color: transparent;
   user-select: none;
 }
+
 
 /* ── Ghost-title animations ────────────────────────────────── */
 @keyframes litsoc-pop {

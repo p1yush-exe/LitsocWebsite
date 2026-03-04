@@ -18,7 +18,7 @@ function p(isInView: boolean, delay: number) {
       duration: 0.6,
       ease: "easeInOut" as const,
       delay,
-      opacity: { duration: 0, delay }, // snap visible exactly when drawing starts — no dot before animation
+      opacity: { duration: 0, delay },
     },
   };
 }
@@ -134,7 +134,7 @@ function toDateKey(y: number, m: number, d: number) {
 
 /** Build a 6-row grid (42 cells) for the given month. */
 function buildGrid(year: number, month: number): (number | null)[] {
-  const firstDow = new Date(year, month, 1).getDay(); // 0=Sun
+  const firstDow = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const cells: (number | null)[] = Array(firstDow).fill(null);
   for (let d = 1; d <= daysInMonth; d++) cells.push(d);
@@ -148,7 +148,7 @@ function CalendarSkeleton() {
     <div className="animate-pulse">
       <div className="grid grid-cols-7">
         {Array(42).fill(0).map((_, i) => (
-          <div key={i} style={{ height: 96 }} />
+          <div key={i} className="aspect-square" />
         ))}
       </div>
     </div>
@@ -168,7 +168,6 @@ export default function EventCalendar() {
 
   useEffect(() => {
     if (calendarInView && !xsDone) {
-      // wait for longest possible X animation to finish (max stagger ~0.8s + 0.2s second stroke + 0.6s duration)
       const t = setTimeout(() => setXsDone(true), 1800);
       return () => clearTimeout(t);
     }
@@ -244,10 +243,10 @@ export default function EventCalendar() {
             style={{
               position: "relative",
               background: "var(--color-milk)",
-              boxShadow: "3px 4px 0 var(--dark-brown-10), -1px -1px 0 var(--dark-brown-06)",
+              boxShadow: "10px 10px 0 var(--dark-brown-30), -1px -1px 0 var(--dark-brown-06)",
             }}
           >
-            {/* Paper texture overlay — blends with cell colors via mix-blend-mode */}
+            {/* Paper texture overlay */}
             <div
               aria-hidden
               style={{
@@ -269,7 +268,9 @@ export default function EventCalendar() {
                   className="font-lato py-2.5 text-center text-sm md:text-lg lg:text-xl font-semibold uppercase tracking-widest text-mid-brown"
                   style={di < 6 ? { borderRight: "1.5px solid var(--dark-brown-18)" } : undefined}
                 >
-                  {d}
+                  {/* Show 1-letter on mobile, full 3-letter on md+ */}
+                  <span className="md:hidden">{d[0]}</span>
+                  <span className="hidden md:inline">{d}</span>
                 </div>
               ))}
             </div>
@@ -294,7 +295,8 @@ export default function EventCalendar() {
                     return (
                       <div
                         key={`e-${i}`}
-                        style={{ height: 96, background: "var(--color-milk)", ...cellBorder }}
+                        className="aspect-square"
+                        style={{ background: "var(--color-milk)", ...cellBorder }}
                       />
                     );
                   }
@@ -308,7 +310,6 @@ export default function EventCalendar() {
                     ? (dayEvents.find((e) => !e.isPast) ?? dayEvents[0])
                     : null;
 
-                  /* Subtle background tint for event cells */
                   let cellBg = "var(--color-milk)";
                   if (hasUpcoming) cellBg = "var(--color-event-highlight)";
                   if (hasPast)     cellBg = "var(--color-event-highlight)";
@@ -323,22 +324,19 @@ export default function EventCalendar() {
                         if (primaryEvent && (e.key === "Enter" || e.key === " ")) setSelectedEvent(primaryEvent);
                       }}
                       aria-label={primaryEvent ? `${primaryEvent.title} — ${key}` : undefined}
+                      className={`relative aspect-square ${primaryEvent ? "hover:brightness-[0.97] cursor-pointer" : "cursor-default"}`}
                       style={{
-                        position: "relative",
-                        height: 96,
                         background: cellBg,
-                        cursor: primaryEvent ? "pointer" : "default",
                         transition: "background 0.12s",
                         ...cellBorder,
                       }}
-                      className={primaryEvent ? "hover:brightness-[0.97]" : ""}
                     >
-                      {/* Date number — centered at top, above event title */}
+                      {/* Date number */}
                       <span
                         className="absolute left-0 right-0 text-center leading-none"
                         style={{
-                          top: 14,
-                          fontSize: 22,
+                          top: 8,
+                          fontSize: "clamp(11px, 3vw, 22px)",
                           color: isToday
                             ? "var(--color-red)"
                             : hasUpcoming
@@ -358,15 +356,15 @@ export default function EventCalendar() {
                       {isToday && (
                         <span
                           className="absolute rounded-full"
-                          style={{ top: 40, left: "50%", transform: "translateX(-50%)", height: 2, width: 16, background: "var(--color-red)" }}
+                          style={{ top: 30, left: "50%", transform: "translateX(-50%)", height: 2, width: 12, background: "var(--color-red)" }}
                         />
                       )}
 
-                      {/* Hand-drawn markers — wrapped around the date number */}
+                      {/* Hand-drawn markers */}
                       {hasUpcoming && (
                         <span
                           className="absolute"
-                          style={{ top: 0, left: "50%", width: 68, height: 68, transform: "translateX(-45%)", zIndex: 1 }}
+                          style={{ top: 0, left: "50%", width: 52, height: 52, transform: "translateX(-45%)", zIndex: 1 }}
                         >
                           {day % 2 === 0
                             ? <HandCircle delay={stagger} isInView={calendarInView} />
@@ -376,7 +374,7 @@ export default function EventCalendar() {
                       {hasPast && (
                         <span
                           className="absolute"
-                          style={{ top: -6, left: "50%", width: 68, height: 68, transform: "translateX(-58%)", zIndex: 1 }}
+                          style={{ top: -4, left: "50%", width: 52, height: 52, transform: "translateX(-58%)", zIndex: 1 }}
                         >
                           {day % 3 === 0
                             ? <HandX  delay={stagger} isInView={calendarInView} done={xsDone} />
@@ -386,10 +384,10 @@ export default function EventCalendar() {
                         </span>
                       )}
 
-                      {/* Event title hint at bottom of cell */}
+                      {/* Event title — hidden on mobile to save space */}
                       {primaryEvent && (
                         <span
-                          className="absolute bottom-1.5 left-1 right-1 block truncate text-[10px] sm:text-[11px] font-semibold leading-none"
+                          className="absolute bottom-1 left-0.5 right-0.5 hidden md:block truncate text-[10px] sm:text-[11px] font-semibold leading-none"
                           style={{ color: "var(--color-red)" }}
                         >
                           {primaryEvent.title}
@@ -419,7 +417,6 @@ export default function EventCalendar() {
               Past event
             </span>
           </div>
-
 
         </div>
       </section>
