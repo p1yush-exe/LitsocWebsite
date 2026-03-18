@@ -310,3 +310,15 @@ h1, h2, h3, h4, h5, h6 {
 .litsoc-pop {
   animation: litsoc-pop 1s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* ── Soft Bounce ──────────────────────────────── */
+@keyframes softbounce {
+  0%,100% { transform: translateY(-3px); }
+  50% { transform: translateY(3px); }
+}
+
+.soft-bounce {
+  animation: softbounce 1.7s ease-in-out infinite;
+}
+
+

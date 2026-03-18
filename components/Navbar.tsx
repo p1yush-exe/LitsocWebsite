@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import MagnetWrap from "@/app/(main)/utility/MagnetWrap";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -75,6 +76,9 @@ export default function Navbar() {
       router.push(`/#${id}`);
     }
   };
+
+  const pathname = usePathname();
+
 
   return (
     <>
@@ -182,28 +186,41 @@ export default function Navbar() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2, delay: 0.18 }}
               >
-                {navLinks.map((link) => (
+                {navLinks.map((link) =>{
+                  const isActive =
+                  pathname === link.href ||
+                  (pathname.startsWith(link.href) && link.href !== "/");
+
+                  const baseClass =
+                    "font-antonio font-black uppercase tracking-[-0.02em] whitespace-nowrap sm:text-2xl md:text-2xl lg:text-4xl text-dark-brown transition-opacity";
+
+                  const activeClass = isActive ? "opacity-100" : "opacity-100";
+                  return (
                   <div key={link.label}>
                     {link.scrollTo ? (
-                      <button
-                        className="font-antonio font-black uppercase tracking-[-0.02em] whitespace-nowrap text-2xl text-dark-brown hover:opacity-60 transition-opacity"
-                        onClick={() => scrollToSection(link.scrollTo!)}
+                      <Link
+                        href={`#${link.scrollTo}`}
+                         className={`${baseClass} ${activeClass} hover:opacity-60`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          scrollToSection(link.scrollTo!);
+                        }}
                       >
                         {link.label}
-                      </button>
+                      </Link>
                     ) : (
                       <Link
                         href={link.href}
                         target={link.external ? "_blank" : undefined}
                         rel={link.external ? "noopener noreferrer" : undefined}
-                        className="font-antonio font-black uppercase tracking-[-0.02em] whitespace-nowrap text-2xl text-dark-brown hover:opacity-60 transition-opacity"
+                        className={`${baseClass} ${activeClass} hover:opacity-60`}
                         onClick={() => setDesktopMenuOpen(false)}
                       >
                         {link.label}
                       </Link>
                     )}
                   </div>
-                ))}
+                )})}
               </motion.div>
             </motion.div>
           )}

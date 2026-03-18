@@ -318,7 +318,10 @@ export default function RouletteSection() {
                     }}
                   >
                     <Image
-                      src={s.icon} alt={s.name} fill
+                      src={s.icon}
+                      alt={s.name}
+                      fill
+                      sizes="(max-width: 1900px) 100vw, 1900px"
                       className="rounded-full object-cover p-1.5"
                       draggable={false}
                     />

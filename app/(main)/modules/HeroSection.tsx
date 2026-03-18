@@ -8,7 +8,7 @@ const BACK_PROMPTS = ["back to the top?", "another ride?", "from the top?"];
 export default function HeroSection() {
   const [animReady, setAnimReady] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [promptIndex] = useState(0);
+  const [promptIndex, setPromptIndex] = useState(0);
   const [bottomOffset, setBottomOffset] = useState(24); // 24px = bottom-6
   const promptRef = useRef<HTMLDivElement>(null);
 
@@ -19,6 +19,7 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
+    let lastScrolled=false;
     const onScroll = () => {
       const footer = document.querySelector("footer");
       if (footer && promptRef.current) {
@@ -30,7 +31,10 @@ export default function HeroSection() {
           setBottomOffset(24);
         }
       }
-      setScrolled(window.scrollY > 80);
+      const nowScrolled = window.scrollY > 80;
+      if(lastScrolled && !nowScrolled) setPromptIndex((prev) => (prev + 1) % BACK_PROMPTS.length);
+      lastScrolled = nowScrolled;
+      setScrolled(nowScrolled);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -88,7 +92,10 @@ export default function HeroSection() {
       <div
         ref={promptRef}
         style={{ bottom: bottomOffset }}
-        className="fixed right-4 md:right-8 z-50 flex flex-col items-center gap-3 transition-[bottom]"
+        className={[
+          "fixed right-4 md:right-8 z-50 flex flex-col items-center gap-3 transition-[bottom]",
+          !scrolled ? "soft-bounce" : "",
+        ].filter(Boolean).join(" ")}
       >
         {/* Vertical line — hidden on mobile */}
         <div className="hidden md:block w-px h-16 md:h-24 bg-dark-brown" />
@@ -108,10 +115,7 @@ export default function HeroSection() {
             "mt-1 flex h-11 w-11 md:h-14 md:w-14 items-center justify-center rounded-full",
             "border-[1.5px] border-dark-brown text-dark-brown",
             "transition-all duration-300 cursor-pointer hover:scale-110 hover:bg-dark-brown hover:text-milk",
-            // Bounce only on mobile (below md) and only before scrolling
-            !scrolled ? "animate-bounce md:animate-none" : "",
           ]
-            .filter(Boolean)
             .join(" ")}
           aria-label={scrolled ? "Scroll to top" : "Scroll down"}
         >
