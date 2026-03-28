@@ -191,8 +191,7 @@ export default function Navbar() {
                   pathname === link.href ||
                   (pathname.startsWith(link.href) && link.href !== "/");
 
-                  const baseClass =
-                    "font-antonio font-black uppercase tracking-[-0.02em] whitespace-nowrap sm:text-2xl md:text-2xl lg:text-4xl text-dark-brown transition-opacity";
+                  const baseClass = "font-antonio font-black uppercase tracking-[-0.02em] whitespace-nowrap sm:text-2xl md:text-2xl lg:text-4xl text-dark-brown transition-transform duration-200 inline-block hover:scale-110";
 
                   const activeClass = isActive ? "opacity-100" : "opacity-100";
                   return (
@@ -200,7 +199,7 @@ export default function Navbar() {
                     {link.scrollTo ? (
                       <Link
                         href={`#${link.scrollTo}`}
-                         className={`${baseClass} ${activeClass} hover:opacity-60`}
+                        className={`${baseClass} ${activeClass}`}
                         onClick={(e) => {
                           e.preventDefault();
                           scrollToSection(link.scrollTo!);
@@ -213,7 +212,7 @@ export default function Navbar() {
                         href={link.href}
                         target={link.external ? "_blank" : undefined}
                         rel={link.external ? "noopener noreferrer" : undefined}
-                        className={`${baseClass} ${activeClass} hover:opacity-60`}
+                        className={`${baseClass} ${activeClass}`}
                         onClick={() => setDesktopMenuOpen(false)}
                       >
                         {link.label}
